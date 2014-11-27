@@ -123,6 +123,9 @@ CREDITS                                                    *asterisk-credits*
 ==============================================================================
 CHANGELOG						*asterisk-changelog*
 
+0.9.1	2014-11-28
+	- Show error with empty selected string
+
 0.9.0	2014-11-28
 	- Init.
 
