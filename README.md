@@ -1,6 +1,6 @@
 vim-asterisk: * -Improved
 ========================
-[![](http://img.shields.io/github/tag/haya14busa/vim-asterisk.svg)](https://github.com/haya14busa/vim-asterisk/releases)
+[![](https://img.shields.io/github/release/haya14busa/vim-asterisk.svg)](https://github.com/haya14busa/vim-asterisk/releases)
 [![](http://img.shields.io/github/issues/haya14busa/vim-asterisk.svg)](https://github.com/haya14busa/vim-asterisk/issues)
 [![](http://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![](http://img.shields.io/badge/doc-%3Ah%20asterisk.txt-red.svg)](doc/asterisk.txt)
