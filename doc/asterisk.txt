@@ -1,7 +1,7 @@
 *asterisk.txt*	*-improved
 
 Author  : haya14busa <hayabusa1419@gmail.com>
-Version : 0.9.0
+Version : 0.9.1
 License : MIT license {{{
 
 	Copyright (c) 2014 haya14busa
@@ -122,6 +122,9 @@ CREDITS                                                    *asterisk-credits*
 
 ==============================================================================
 CHANGELOG						*asterisk-changelog*
+
+0.9.1	2014-11-28
+	- Show error with empty selected string
 
 0.9.0	2014-11-28
 	- Init.
