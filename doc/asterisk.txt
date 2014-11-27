@@ -1,0 +1,130 @@
+*asterisk.txt*	*-improved
+
+Author  : haya14busa <hayabusa1419@gmail.com>
+Version : 0.9.0
+License : MIT license {{{
+
+	Copyright (c) 2014 haya14busa
+
+	Permission is hereby granted, free of charge, to any person obtaining
+	a copy of this software and associated documentation files (the
+	"Software"), to deal in the Software without restriction, including
+	without limitation the rights to use, copy, modify, merge, publish,
+	distribute, sublicense, and/or sell copies of the Software, and to
+	permit persons to whom the Software is furnished to do so, subject to
+	the following conditions:
+	The above copyright notice and this permission notice shall be
+	included in all copies or substantial portions of the Software.
+
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+	EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+	MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+	IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+	CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+	TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+	SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+}}}
+
+CONTENTS				*asterisk-contents*
+
+	Introduction			|asterisk-introduction|
+	Install				|asterisk-install|
+	Usage				|asterisk-usage|
+	Known Issues			|asterisk-known-issues|
+	ChangeLog			|asterisk-changelog|
+
+==============================================================================
+INTRODUCTION					    *asterisk-introduction*
+
+	*asterisk.vim* provides improved |star| motions. It works in visual
+	mode and provide stay star motions which don't move cursor.
+
+==============================================================================
+INSTALL						    *asterisk-install*
+
+	Install with |NeoBundle|:
+
+		1. Add the following configuration to your vimrc.
+>
+		NeoBundle 'haya14busa/vim-asterisk'
+<
+		2. Install with |:NeoBundleInstall|.
+
+	Install with |NeoBundleLazy|:
+
+		1. Add the following configuration sample to your vimrc.
+>
+		NeoBundleLazy 'haya14busa/vim-asterisk', {
+		\   'autoload' : {
+		\     'mappings' : ['<Plug>(asterisk-']
+		\   }
+		\ }
+<
+		2. Install with |:NeoBundleInstall|.
+
+
+==============================================================================
+USAGE							*asterisk-usage*
+
+<Plug>(asterisk-*)  					*<Plug>(asterisk-star)*
+<Plug>(asterisk-#)     					*<Plug>(asterisk-#)*
+<Plug>(asterisk-g*) 					*<Plug>(asterisk-gstar)*
+<Plug>(asterisk-g#)    					*<Plug>(asterisk-g#)*
+<Plug>(asterisk-z*) 					*<Plug>(asterisk-zstar)*
+<Plug>(asterisk-z#)    					*<Plug>(asterisk-z#)*
+<Plug>(asterisk-gz*) 					*<Plug>(asterisk-gzstar)*
+<Plug>(asterisk-gz#)   					*<Plug>(asterisk-gz#)*
+
+	Basic behavior is almost same with default one.
+	See: |star|, |#|, |gsatr|, |g#|
+
+	Improvement:
+	    - It uses not only 'ignorecase' but also 'smartcase' unlike
+	      default |star|.
+	    - It works in visual mode in addition to |Normal| & |Visual|.
+	      Search selected text.
+	    - "z" prefixed mappings doesn't move the cursor.
+
+	Example: Write following lines to your vimrc:
+>
+		map *   <Plug>(asterisk-*)
+		map #   <Plug>(asterisk-#)
+		map g*  <Plug>(asterisk-g*)
+		map g#  <Plug>(asterisk-g#)
+		map z*  <Plug>(asterisk-z*)
+		map gz* <Plug>(asterisk-gz*)
+		map z#  <Plug>(asterisk-z#)
+		map gz# <Plug>(asterisk-gz#)
+<
+	If you want to set "z" (stay) behavior as default
+>
+		map *  <Plug>(asterisk-z*)
+		map #  <Plug>(asterisk-z#)
+		map g* <Plug>(asterisk-gz*)
+		map g# <Plug>(asterisk-gz#)
+<
+
+==============================================================================
+KNOWN ISSUES						*asterisk-issues*
+
+	Issues
+	  https://github.com/haya14busa/asterisk.vim/issues
+
+
+==============================================================================
+CREDITS                                                    *asterisk-credits*
+
+|asterisk.vim| uses the code from vim-visualstar for visual star feature.
+
+- Plugin: https://github.com/thinca/vim-visualstar
+- Author: thinca (https://github.com/thinca)
+
+==============================================================================
+CHANGELOG						*asterisk-changelog*
+
+0.9.0	2014-11-28
+	- Init.
+
+
+vim:tw=78:ts=8:ft=help:norl:noet:fen:fdl=0:fdm=marker:
