@@ -50,7 +50,8 @@ function! asterisk#do(mode, config) abort
     let config = extend(s:default_config(), a:config)
     let pattern = (s:is_visual(a:mode) ?
     \   s:convert_2_word_pattern(s:get_selected_text(), config) : s:cword_pattern(config))
-    if s:is_empty_cword(pattern) " 'E348: No string under cursor'
+    if s:is_empty_cword(pattern)
+        " 'E348: No string under cursor'
         if s:is_visual(a:mode)
             return "\<Esc>:echohl ErrorMsg | echom 'asterisk.vim: No selected string' | echohl None\<CR>"
         else
