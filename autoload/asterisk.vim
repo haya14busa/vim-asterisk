@@ -48,43 +48,38 @@ endfunction
 " @return command: String
 function! asterisk#do(mode, config) abort
     let config = extend(s:default_config(), a:config)
-    let pattern = (s:is_visual(a:mode) ?
-    \   s:convert_2_word_pattern(s:get_selected_text(), config) : s:cword_pattern(config))
-    if s:is_empty_cword(pattern)
-        " 'E348: No string under cursor'
-        if s:is_visual(a:mode)
-            return "\<Esc>:echohl ErrorMsg | echom 'asterisk.vim: No selected string' | echohl None\<CR>"
-        else
-            return '*'
-        endif
+    let is_visual = s:is_visual(a:mode)
+    " Raw cword without \<\>
+    let cword = (is_visual ? s:get_selected_text() : expand('<cword>'))
+    if cword is# ''
+        return s:generate_error_cmd(is_visual)
     endif
-    let should_plus_one_count = s:should_plus_one_count(pattern, config, a:mode)
+    " v:count handling
+    let should_plus_one_count = s:should_plus_one_count(cword, config, a:mode)
     let maybe_count = (should_plus_one_count ? string(v:count1 + 1) : '')
-    let pre = (s:is_visual(a:mode) || should_plus_one_count ? "\<Esc>" . maybe_count : '')
+    let pre = (is_visual || should_plus_one_count ? "\<Esc>" . maybe_count : '')
+    " Including \<\> if necessary
+    let pattern = (is_visual ?
+    \   s:convert_2_word_pattern_4_visual(cword, config) : s:cword_pattern(cword, config))
     if config.do_jump
         let key = (config.direction is s:DIRECTION.forward ? '/' : '?')
         return pre . key . pattern . "\<CR>"
     else
         call s:set_search(pattern)
-        " :h function-search-undo
-        " :h v:searchforward
-        let hlsearch = 'let &hlsearch=&hlsearch'
-        let searchforward = printf('let v:searchforward = %d', config.direction)
-        let echo = printf("echo '%s'", pattern)
-        return printf("%s:\<C-u>%s | %s | %s\<CR>", pre, hlsearch, searchforward, echo)
+        return s:generate_set_search_cmd(pattern, pre, config)
     endif
 endfunction
 
-" @return cword: String
-function! s:cword_pattern(config) abort
-    return printf((a:config.is_whole ? '\<%s\>' : '%s'), expand('<cword>'))
+" @return \<cword\>: String
+function! s:cword_pattern(cword, config) abort
+    return printf((a:config.is_whole ? '\<%s\>' : '%s'), a:cword)
 endfunction
 
 " This function is based on https://github.com/thinca/vim-visualstar
 " Author  : thinca <thinca+vim@gmail.com>
 " License : zlib License
-" @return selected_pattern: String
-function! s:convert_2_word_pattern(pattern, config) abort
+" @return \<selected_pattern\>: String
+function! s:convert_2_word_pattern_4_visual(pattern, config) abort
     let text = a:pattern
     let type = (a:config.direction is# s:DIRECTION.forward ? '/' : '?')
     let [pre, post] = ['', '']
@@ -115,29 +110,49 @@ function! s:convert_2_word_pattern(pattern, config) abort
     return '\V' . pre . text . post
 endfunction
 
-function! s:is_empty_cword(pattern) abort
-    return a:pattern =~# '\m^\%(\\V\)\=\%(\\<\\>\)\=$'
-endfunction
-
+"" Set pattern and history for search
 " @return nothing
-function! s:set_search(pattern, ...) abort
+function! s:set_search(pattern) abort
     let @/ = a:pattern
     call histadd('/', @/)
 endfunction
 
+"" Generate command to turn on search related option like hlsearch to work
+" with :h function-search-undo
+" @return command: String
+function! s:generate_set_search_cmd(pattern, pre, config) abort
+    " :h function-search-undo
+    " :h v:hlsearch
+    " :h v:searchforward
+    let hlsearch = 'let &hlsearch=&hlsearch'
+    let searchforward = printf('let v:searchforward = %d', a:config.direction)
+    let echo = printf("echo '%s'", a:pattern)
+    return printf("%s:\<C-u>%s | %s | %s\<CR>", a:pre, hlsearch, searchforward, echo)
+endfunction
+
+"" Generate command to show error with empty pattern
+" @return error_command: String
+function! s:generate_error_cmd(is_visual) abort
+    " 'E348: No string under cursor'
+    let m = 'asterisk.vim: No selected string'
+    return (a:is_visual
+    \   ? printf("\<Esc>:echohl ErrorMsg | echom '%s' | echohl None\<CR>", m)
+    \   : '*')
+endfunction
+
 " @return boolean
-function! s:should_plus_one_count(pattern, config, mode) abort
+function! s:should_plus_one_count(cword, config, mode) abort
     " For backward only because count isn't needed with <expr> but it requires
     " +1 for backward and for the case that cursor is not at the head of
-    " pattern
-    return a:config.direction is# s:DIRECTION.backward && ! s:is_head_of_cword(a:pattern)
+    " cword
+    return (a:config.direction is# s:DIRECTION.backward && ! s:is_head_of_cword(a:cword))
     \   || (!s:is_visual(a:mode) && s:get_pos_char() !~# '\k')
 endfunction
 
 " @return boolean
-function! s:is_head_of_cword(pattern) abort
+function! s:is_head_of_cword(cword) abort
     let c = col('.')
-    return a:pattern is# getline(line('.'))[c - 1 : c + strlen(a:pattern) - 2]
+    return a:cword is# getline(line('.'))[c - 1 : c + strlen(a:cword) - 2]
 endfunction
 
 " Assume the current mode is middle of visual mode.
