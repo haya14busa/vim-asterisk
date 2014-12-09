@@ -159,9 +159,10 @@ endfunction
 " @return selected text
 function! s:get_selected_text(...) abort
     let mode = get(a:, 1, mode(1))
-    let end_curswant = winsaveview().curswant + 1
-    let current_pos = [line('.'), end_curswant < 0 ? s:INT.MAX : end_curswant ]
-    let other_end_pos = [line('v'), col('v')]
+    let end_col = winsaveview().curswant is s:INT.MAX ?
+    \   s:INT.MAX : s:get_multibyte_aware_col('.')
+    let current_pos = [line('.'), end_col]
+    let other_end_pos = [line('v'), s:get_multibyte_aware_col('v')]
     let [begin, end] = s:sort_pos([current_pos, other_end_pos])
     if mode ==# "\<C-v>"
         let [min_c, max_c] = s:sort_num([begin[1], end[1]])
@@ -180,6 +181,17 @@ function! s:get_selected_text(...) abort
         endif
     endif
     return join(lines, "\n") . (mode ==# "V" ? "\n" : '')
+endfunction
+
+" @return multibyte aware column number for select
+function! s:get_multibyte_aware_col(pos) abort
+    let [pos, other] = [a:pos, a:pos is '.' ? 'v' : '.']
+    let c = col(pos)
+    let char = s:compare_pos(getpos(pos)[1:2], getpos(other)[1:2]) > 0
+    \   ? get(split(getline(pos)[c-1:], '\zs'), 0, '')
+    \   : get(split(getline(pos)[:c], '\zs'), -1, '')
+    let d = len(char)
+    return c + d - 1
 endfunction
 
 " Helper:
