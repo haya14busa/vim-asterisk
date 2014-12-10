@@ -187,11 +187,10 @@ endfunction
 function! s:get_multibyte_aware_col(pos) abort
     let [pos, other] = [a:pos, a:pos is '.' ? 'v' : '.']
     let c = col(pos)
-    let char = s:compare_pos(getpos(pos)[1:2], getpos(other)[1:2]) > 0
-    \   ? get(split(getline(pos)[c-1:], '\zs'), 0, '')
-    \   : get(split(getline(pos)[:c], '\zs'), -1, '')
-    let d = len(char)
-    return c + d - 1
+    let d = s:compare_pos(getpos(pos)[1:2], getpos(other)[1:2]) > 0
+    \   ? len(matchstr(getline(pos), '.', c - 1)) - 1
+    \   : 0
+    return c + d
 endfunction
 
 " Helper:
