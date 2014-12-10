@@ -4,6 +4,11 @@ let g:Expect = themis#helper('expect')
 call themis#helper('command').with(themis#helper('assert')).with({'Expect': g:Expect})
 
 language C
+set encoding=utf-8 "Sets the character encoding used inside Vim
+set termencoding=utf-8
+set fileencoding=utf-8
+set fileencodings=utf-8,cp932,euc-jp "A list of character encodings
+set fileformats=unix,dos,mac "This gives the end-of-line (<EOL>) formats
 
 " Mapping:
 map *   <Plug>(asterisk-*)
@@ -32,5 +37,5 @@ function! g:Add_lines(lines)
     endfor
 endfunction
 function! g:Get_pos_char()
-    return getline('.')[col('.')-1]
+    return matchstr(getline('.'), '.', col('.') - 1)
 endfunction

@@ -1,3 +1,4 @@
+scriptencoding utf-8
 Describe basic_asterisk
 
     Before all
@@ -44,7 +45,7 @@ Describe basic_asterisk
         It search forward multibyte word
             normal! 3j
             normal *
-            normal! 2h
+            normal! B
             Assert Equals(g:Get_pos_char(), '8')
         End
         It throws the error if there are no <cword>
