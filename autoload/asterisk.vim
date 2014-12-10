@@ -86,7 +86,7 @@ function! s:convert_2_word_pattern_4_visual(pattern, config) abort
     if a:config.is_whole
         let head = matchstr(text, '^.')
         let is_head_multibyte = 1 < len(head)
-        let [l, col] = getpos("'<")[1 : 2]
+        let [l, col] = getpos("v")[1 : 2]
         let line = getline(l)
         let before = line[: col - 2]
         let outer = matchstr(before, '.$')
@@ -96,7 +96,7 @@ function! s:convert_2_word_pattern_4_visual(pattern, config) abort
         endif
         let tail = matchstr(text, '.$')
         let is_tail_multibyte = 1 < len(tail)
-        let [l, col] = getpos("'>")[1 : 2]
+        let [l, col] = getpos(".")[1 : 2]
         let col += len(tail) - 1
         let line = getline(l)
         let after = line[col :]
