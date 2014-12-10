@@ -202,7 +202,7 @@ function! s:is_visual(mode) abort
     return a:mode =~# "[vV\<C-v>]"
 endfunction
 
-function! s:get_pos_char()
+function! s:get_pos_char() abort
     return getline('.')[col('.')-1]
 endfunction
 
