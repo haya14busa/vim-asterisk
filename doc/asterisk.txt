@@ -1,7 +1,7 @@
 *asterisk.txt*	*-improved
 
 Author  : haya14busa <hayabusa1419@gmail.com>
-Version : 0.9.2
+Version : 0.9.3
 License : MIT license {{{
 
 	Copyright (c) 2014 haya14busa
@@ -123,9 +123,13 @@ CREDITS                                                    *asterisk-credits*
 ==============================================================================
 CHANGELOG						*asterisk-changelog*
 
+0.9.3	2014-12-10
+	- Fix multybite handling for visual-star feature.
+	- Fix |v| selection over multi lines.
+
 0.9.2	2014-12-01
 	- Fix count handling for |#| motions with pattern including |\<| and |\>|.
-	- Refactoring
+	- Refactoring.
 
 0.9.1	2014-11-28
 	- Show error with empty selected string.
