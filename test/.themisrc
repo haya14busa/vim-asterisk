@@ -1,0 +1,26 @@
+call themis#option('recursive', 1)
+
+let g:Expect = themis#helper('expect')
+call themis#helper('command').with(themis#helper('assert')).with({'Expect': g:Expect})
+
+language C
+
+" Mapping:
+map *   <Plug>(asterisk-*)
+map #   <Plug>(asterisk-#)
+map g*  <Plug>(asterisk-g*)
+map g#  <Plug>(asterisk-g#)
+map z*  <Plug>(asterisk-z*)
+map gz* <Plug>(asterisk-gz*)
+map z#  <Plug>(asterisk-z#)
+map gz# <Plug>(asterisk-gz#)
+
+" Default:
+noremap <Leader>*   *
+noremap <Leader>#   #
+noremap <Leader>g   g
+noremap <Leader>g#  g#
+noremap <Leader>z   z
+noremap <Leader>gz  gz
+noremap <Leader>z#  z#
+noremap <Leader>gz# gz#
