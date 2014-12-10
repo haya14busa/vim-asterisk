@@ -143,11 +143,13 @@ endfunction
 
 " @return boolean
 function! s:should_plus_one_count(cword, config, mode) abort
-    " For backward only because count isn't needed with <expr> but it requires
+    " For backward, because count isn't needed with <expr> but it requires
     " +1 for backward and for the case that cursor is not at the head of
     " cword
-    return (a:config.direction is# s:DIRECTION.backward && ! s:is_head_of_cword(a:cword))
-    \   || (!s:is_visual(a:mode) && s:get_pos_char() !~# '\k')
+    return s:is_visual(a:mode) ? s:FALSE
+    \   : a:config.direction is# s:DIRECTION.backward
+    \   ? s:get_pos_char() =~# '\k' && ! s:is_head_of_cword(a:cword)
+    \   : s:get_pos_char() !~# '\k'
 endfunction
 
 " @return boolean
