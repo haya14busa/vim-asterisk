@@ -24,3 +24,13 @@ noremap <Leader>z   z
 noremap <Leader>gz  gz
 noremap <Leader>z#  z#
 noremap <Leader>gz# gz#
+
+" Helper Functions:
+function! g:Add_lines(lines)
+    for line in reverse(a:lines)
+        put! =line
+    endfor
+endfunction
+function! g:Get_pos_char()
+    return getline('.')[col('.')-1]
+endfunction
