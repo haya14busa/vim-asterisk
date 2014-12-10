@@ -1,6 +1,7 @@
 vim-asterisk: * -Improved
 ========================
 [![](https://travis-ci.org/haya14busa/vim-asterisk.svg?branch=master)](https://travis-ci.org/haya14busa/vim-asterisk)
+[![](https://ci.appveyor.com/api/projects/status/uurxg9ips6h2cyd3/branch/master?svg=true)](https://ci.appveyor.com/project/haya14busa/vim-asterisk/branch/master)
 [![](https://drone.io/github.com/haya14busa/vim-asterisk/status.png)](https://drone.io/github.com/haya14busa/vim-asterisk/latest)
 [![](https://img.shields.io/github/release/haya14busa/vim-asterisk.svg)](https://github.com/haya14busa/vim-asterisk/releases)
 [![](http://img.shields.io/github/issues/haya14busa/vim-asterisk.svg)](https://github.com/haya14busa/vim-asterisk/issues)
