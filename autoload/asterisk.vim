@@ -177,7 +177,7 @@ function! s:get_selected_text(...) abort
         else
             let lines = [getline(begin[0])[begin[1]-1 :]]
             \         + (end[0] - begin[0] < 2 ? [] : getline(begin[0]+1, end[0]-1))
-            \         + [getline(end[0])[: end[1]]]
+            \         + [getline(end[0])[: end[1]-1]]
         endif
     endif
     return join(lines, "\n") . (mode ==# "V" ? "\n" : '')
