@@ -16,8 +16,12 @@ asterisk.vim provides improved * motions.
 ### 1. stay star motions (z prefixed mappings)
 z star motions doesn't move your cursor.
 
+![](https://github.com/haya14busa/i/raw/master/vim-asterisk/asterisk_z_star.gif)
+
 ### 2. visual star motions
 Search selected text.
+
+![](https://github.com/haya14busa/i/raw/master/vim-asterisk/asterisk_visual_star.gif)
 
 ### 3. Use smartcase unlike default one
 Default behavior, which see ignorecase and not smartcase, is not intuitive.
