@@ -127,7 +127,7 @@ function! s:generate_set_search_cmd(pattern, pre, config) abort
     " :h v:searchforward
     let hlsearch = 'let &hlsearch=&hlsearch'
     let searchforward = printf('let v:searchforward = %d', a:config.direction)
-    let echo = printf("echo '%s'", a:pattern)
+    let echo = printf('echo "%s"', a:pattern)
     return printf("%s:\<C-u>%s | %s | %s\<CR>", a:pre, hlsearch, searchforward, echo)
 endfunction
 
@@ -169,10 +169,10 @@ function! s:get_selected_text(...) abort
     let [begin, end] = s:sort_pos([current_pos, other_end_pos])
     if mode ==# "\<C-v>"
         let [min_c, max_c] = s:sort_num([begin[1], end[1]])
-        let lines = map(range(begin[0], end[0]), "
+        let lines = map(range(begin[0], end[0]), '
         \   getline(v:val)[min_c - 1 : max_c - 1]
-        \ ")
-    elseif mode ==# "V"
+        \ ')
+    elseif mode ==# 'V'
         let lines = getline(begin[0], end[0])
     else
         if begin[0] ==# end[0]
@@ -183,7 +183,7 @@ function! s:get_selected_text(...) abort
             \         + [getline(end[0])[: end[1]-1]]
         endif
     endif
-    return join(lines, "\n") . (mode ==# "V" ? "\n" : '')
+    return join(lines, "\n") . (mode ==# 'V' ? "\n" : '')
 endfunction
 
 " @return multibyte aware column number for select

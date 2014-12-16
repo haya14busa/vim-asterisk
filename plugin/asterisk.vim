@@ -24,7 +24,7 @@
 "=============================================================================
 scriptencoding utf-8
 " Load Once {{{
-if expand("%:p") ==# expand("<sfile>:p")
+if expand('%:p') ==# expand('<sfile>:p')
     unlet! g:loaded_asterisk
 endif
 if exists('g:loaded_asterisk')
