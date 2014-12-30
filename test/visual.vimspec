@@ -14,6 +14,7 @@ Describe visual
     Before each
         :1
         normal! 2l
+        let @/ = ''
     End
 
     After all
@@ -22,19 +23,35 @@ Describe visual
 
     Context *
         It search forward with \<\>
-            let @/ = ''
             normal viw*
             Assert Equals(@/, '\V\<asterisk\>')
         End
         It search forward only with \<
-            let @/ = ''
             normal v2l*
             Assert Equals(@/, '\V\<ast')
         End
         It search forward only with \>
-            let @/ = ''
             normal 2lve*
             Assert Equals(@/, '\Vterisk\>')
+        End
+    End
+
+    Context multibyte *
+        It handle left keyword
+            normal 3jv2l*
+            Assert Equals(@/, '\V\<アスタ')
+        End
+        It handle right keyword
+            normal 3jev2h*
+            Assert Equals(@/, '\Vリスク\>')
+        End
+        It handle left and right keyword
+            normal 3jve*
+            Assert Equals(@/, '\V\<アスタリスク\>')
+        End
+        It is irrelabant with keyword
+            normal 3jlv2l*
+            Assert Equals(@/, '\Vスタリ')
         End
     End
 
