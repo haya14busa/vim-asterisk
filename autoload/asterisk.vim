@@ -61,12 +61,19 @@ function! asterisk#do(mode, config) abort
     " Including \<\> if necessary
     let pattern = (is_visual ?
     \   s:convert_2_word_pattern_4_visual(cword, config) : s:cword_pattern(cword, config))
+    let key = (config.direction is s:DIRECTION.forward ? '/' : '?')
+    " Get offset in current word
+    let offset = s:get_pos_in_cword(cword)
+
+    let search_pre = pre . key
+    let pattern_offseted = (offset == 0) ? pattern : key . "s+" . offset
+    let search_cmd = search_pre . pattern_offseted
+
     if config.do_jump
-        let key = (config.direction is s:DIRECTION.forward ? '/' : '?')
-        return pre . key . pattern . "\<CR>"
+        return search_cmd . "\<CR>"
     else
-        call s:set_search(pattern)
-        return s:generate_set_search_cmd(pattern, pre, config)
+        call s:set_search(pattern, key, pattern_offseted)
+        return '0' . search_cmd . "\<CR>"
     endif
 endfunction
 
@@ -113,23 +120,27 @@ endfunction
 
 "" Set pattern and history for search
 " @return nothing
-function! s:set_search(pattern) abort
+function! s:set_search(pattern, key, pattern_offseted) abort
     let @/ = a:pattern
-    call histadd('/', @/)
+    call histadd(a:key, a:pattern_offseted)
 endfunction
 
-"" Generate command to turn on search related option like hlsearch to work
-" with :h function-search-undo
-" @return command: String
-function! s:generate_set_search_cmd(pattern, pre, config) abort
-    " :h function-search-undo
-    " :h v:hlsearch
-    " :h v:searchforward
-    let hlsearch = 'let &hlsearch=&hlsearch'
-    let searchforward = printf('let v:searchforward = %d', a:config.direction)
-    let echo = printf('echo "%s"', a:pattern)
-    return printf("%s:\<C-u>%s | %s | %s\<CR>", a:pre, hlsearch, searchforward, echo)
-endfunction
+" Generate command to turn on search related option like hlsearch to work
+"" with :h function-search-undo
+"" @return command: String
+""function! s:generate_set_search_cmd(pattern, pre, config) abort
+""     :h function-search-undo
+""     :h v:hlsearch
+""     :h v:searchforward
+""    let hlsearch = 'let &hlsearch=&hlsearch'
+""    echom hlsearch
+""    let searchforward = printf('let v:searchforward = %d', a:config.direction)
+""    let echo = printf('echo "%s"', a:pattern) " /!\ backslash on column 32
+""    echom echo
+""    echom printf("%s:\<C-u>%s | %s | %s\<CR>", a:pre, hlsearch, searchforward, echo)
+""    return printf("%s:\<C-u>%s | %s | %s\<CR>", a:pre, hlsearch, searchforward, echo)
+""    return printf("%s:\<C-u>%s | %s | %s\<CR>", a:pre, hlsearch, searchforward, echo)
+""endfunction
 
 "" Generate command to show error with empty pattern
 " @return error_command: String
@@ -206,6 +217,15 @@ function! s:get_pos_char() abort
     return getline('.')[col('.')-1]
 endfunction
 
+"@ return int index of cursor in cword
+function! s:get_pos_in_cword(cword)
+    if s:is_visual(mode())
+        return 0
+    else
+        return col('.') - searchpos(a:cword, 'bcnp')[1]
+    endif
+endfunction
+
 function! s:sort_num(xs) abort
     " 7.4.341
     " http://ftp.vim.org/vim/patches/7.4/7.4.341
@@ -237,3 +257,4 @@ unlet s:save_cpo
 " vim: expandtab softtabstop=4 shiftwidth=4
 " vim: foldmethod=marker
 " }}}
+
