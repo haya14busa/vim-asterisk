@@ -66,15 +66,11 @@ function! asterisk#do(mode, config) abort
     let offset = s:get_pos_in_cword(cword)
 
     let search_pre = pre . key
-    let pattern_offseted = (offset == 0) ? pattern : key . "s+" . offset
+    let pattern_offseted = (offset == 0) ? pattern : pattern . key . "s+" . offset
     let search_cmd = search_pre . pattern_offseted
+    let jump_prefix = config.do_jump ? '' : '0'
 
-    if config.do_jump
-        return search_cmd . "\<CR>"
-    else
-        call s:set_search(pattern, key, pattern_offseted)
-        return '0' . search_cmd . "\<CR>"
-    endif
+    return jump_prefix . search_cmd . "\<CR>"
 endfunction
 
 " @return \<cword\>: String
@@ -120,10 +116,10 @@ endfunction
 
 "" Set pattern and history for search
 " @return nothing
-function! s:set_search(pattern, key, pattern_offseted) abort
-    let @/ = a:pattern
-    call histadd(a:key, a:pattern_offseted)
-endfunction
+"function! s:set_search(pattern, key, pattern_offseted) abort
+    "let @/ = a:pattern
+    "call histadd(a:key, a:pattern_offseted)
+"endfunction
 
 " Generate command to turn on search related option like hlsearch to work
 "" with :h function-search-undo
