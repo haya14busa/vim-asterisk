@@ -221,6 +221,11 @@ function! s:get_multibyte_aware_col(pos) abort
     return c + d
 endfunction
 
+function! s:get_multi_col(pos) abort
+    let c = col(a:pos)
+    return c + len(matchstr(getline(a:pos), '.', c - 1)) - 1
+endfunction
+
 " Helper:
 
 function! s:is_visual(mode) abort
@@ -234,7 +239,13 @@ endfunction
 " @return int index of cursor in cword
 function! s:get_pos_in_cword(cword, ...) abort
     return (s:is_visual(get(a:, 1, mode(1))) || s:get_pos_char() !~# '\k') ? 0
-    \   : col('.') - searchpos(a:cword, 'bcn')[1]
+    \   : s:count_char(searchpos(a:cword, 'bcn')[1], s:get_multi_col('.'))
+endfunction
+
+" multibyte aware
+function! s:count_char(from, to) abort
+    let chars = getline('.')[a:from-1:a:to-1]
+    return len(split(chars, '\zs')) - 1
 endfunction
 
 " 7.4.341
