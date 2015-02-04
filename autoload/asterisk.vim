@@ -222,19 +222,20 @@ function! s:get_pos_in_cword(cword)
     endif
 endfunction
 
-function! s:sort_num(xs) abort
-    " 7.4.341
-    " http://ftp.vim.org/vim/patches/7.4/7.4.341
-    if v:version > 704 || v:version == 704 && has('patch341')
+" 7.4.341
+" http://ftp.vim.org/vim/patches/7.4/7.4.341
+if v:version > 704 || v:version == 704 && has('patch341')
+    function! s:sort_num(xs) abort
         return sort(a:xs, 'n')
-    else
+    endfunction
+else
+    function! s:_sort_num_func(x, y) abort
+        return a:x - a:y
+    endfunction
+    function! s:sort_num(xs) abort
         return sort(a:xs, 's:_sort_num_func')
-    endif
-endfunction
-
-function! s:_sort_num_func(x, y) abort
-    return a:x - a:y
-endfunction
+    endfunction
+endif
 
 function! s:sort_pos(pos_list) abort
     " pos_list: [ [x1, y1], [x2, y2] ]
