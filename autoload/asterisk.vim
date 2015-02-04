@@ -150,7 +150,6 @@ function! s:generate_set_search_cmd(pattern, pre, config) abort
     " :h function-search-undo
     " :h v:hlsearch
     " :h v:searchforward
-    let pre = a:pre
     let hlsearch = 'let &hlsearch=&hlsearch'
     let searchforward = printf('let v:searchforward = %d', a:config.direction)
     let echo = printf('echo "%s"', a:pattern)
@@ -233,9 +232,8 @@ function! s:get_pos_char() abort
 endfunction
 
 " @return int index of cursor in cword
-function! s:get_pos_in_cword(cword, ...)
-    let mode = get(a:, 1, mode(1))
-    return (s:is_visual(mode) || s:get_pos_char() !~# '\k') ? 0
+function! s:get_pos_in_cword(cword, ...) abort
+    return (s:is_visual(get(a:, 1, mode(1))) || s:get_pos_char() !~# '\k') ? 0
     \   : col('.') - searchpos(a:cword, 'bcn')[1]
 endfunction
 
