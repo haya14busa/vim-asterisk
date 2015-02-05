@@ -161,8 +161,7 @@ endfunction
 
 " @return boolean
 function! s:is_head_of_cword(cword) abort
-    let c = col('.')
-    return a:cword is# getline(line('.'))[c - 1 : c + strlen(a:cword) - 2]
+    return 0 == get_pos_in_cword(a:cword)
 endfunction
 
 " Assume the current mode is middle of visual mode.
