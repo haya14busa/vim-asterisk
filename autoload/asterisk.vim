@@ -33,6 +33,8 @@ let s:FALSE = 0
 let s:INT = { 'MAX': 2147483647 }
 let s:DIRECTION = { 'forward': 1, 'backward': 0 } " see :h v:searchforward
 
+let g:asterisk#keeppos = get(g:, 'asterisk#keeppos', s:FALSE)
+
 " do_jump: do not move cursor
 " is_whole: is_whole word. false if `g` flag given (e.g. * -> true, g* -> false)
 let s:_config = {
@@ -63,14 +65,34 @@ function! asterisk#do(mode, config) abort
     \   s:convert_2_word_pattern_4_visual(cword, config) : s:cword_pattern(cword, config))
     let key = (config.direction is s:DIRECTION.forward ? '/' : '?')
     " Get offset in current word
-    let offset = s:get_pos_in_cword(cword)
+    let offset = g:asterisk#keeppos ? s:get_pos_in_cword(cword, a:mode) : 0
+    let pattern_offseted = pattern . (offset is 0 ? '' : key . 's+' . offset)
+    let search_cmd = pre . key . pattern_offseted
+    if config.do_jump
+        return search_cmd . "\<CR>"
+    elseif g:asterisk#keeppos && offset isnot 0
+        let echo = printf('echo "%s"', pattern_offseted)
+        " XXX: it cause flick if the next match is not in the current window.
+        let restore = s:restore_pos_cmd()
+        return printf("%s\<CR>:%s | %s\<CR>", search_cmd, restore, echo)
+    else
+        call s:set_search(pattern)
+        return s:generate_set_search_cmd(pattern, pre, config)
+    endif
+endfunction
 
-    let search_pre = pre . key
-    let pattern_offseted = (offset == 0) ? pattern : pattern . key . "s+" . offset
-    let search_cmd = search_pre . pattern_offseted
-    let jump_prefix = config.do_jump ? '' : '0'
+"" return last position for stay command with offset
+function! asterisk#w() abort
+    return get(s:, 'w', winsaveview())
+endfunction
 
-    return jump_prefix . search_cmd . "\<CR>"
+function! s:set_view(view) abort
+    let s:w = a:view
+endfunction
+
+function! s:restore_pos_cmd() abort
+    call s:set_view(winsaveview())
+    return 'call winrestview(asterisk#w())'
 endfunction
 
 " @return \<cword\>: String
@@ -116,27 +138,23 @@ endfunction
 
 "" Set pattern and history for search
 " @return nothing
-"function! s:set_search(pattern, key, pattern_offseted) abort
-    "let @/ = a:pattern
-    "call histadd(a:key, a:pattern_offseted)
-"endfunction
+function! s:set_search(pattern) abort
+    let @/ = a:pattern
+    call histadd('/', @/)
+endfunction
 
-" Generate command to turn on search related option like hlsearch to work
-"" with :h function-search-undo
-"" @return command: String
-""function! s:generate_set_search_cmd(pattern, pre, config) abort
-""     :h function-search-undo
-""     :h v:hlsearch
-""     :h v:searchforward
-""    let hlsearch = 'let &hlsearch=&hlsearch'
-""    echom hlsearch
-""    let searchforward = printf('let v:searchforward = %d', a:config.direction)
-""    let echo = printf('echo "%s"', a:pattern) " /!\ backslash on column 32
-""    echom echo
-""    echom printf("%s:\<C-u>%s | %s | %s\<CR>", a:pre, hlsearch, searchforward, echo)
-""    return printf("%s:\<C-u>%s | %s | %s\<CR>", a:pre, hlsearch, searchforward, echo)
-""    return printf("%s:\<C-u>%s | %s | %s\<CR>", a:pre, hlsearch, searchforward, echo)
-""endfunction
+"" Generate command to turn on search related option like hlsearch to work
+" with :h function-search-undo
+" @return command: String
+function! s:generate_set_search_cmd(pattern, pre, config) abort
+    " :h function-search-undo
+    " :h v:hlsearch
+    " :h v:searchforward
+    let hlsearch = 'let &hlsearch=&hlsearch'
+    let searchforward = printf('let v:searchforward = %d', a:config.direction)
+    let echo = printf('echo "%s"', a:pattern)
+    return printf("%s:\<C-u>%s | %s | %s\<CR>", a:pre, hlsearch, searchforward, echo)
+endfunction
 
 "" Generate command to show error with empty pattern
 " @return error_command: String
@@ -202,6 +220,11 @@ function! s:get_multibyte_aware_col(pos) abort
     return c + d
 endfunction
 
+function! s:get_multi_col(pos) abort
+    let c = col(a:pos)
+    return c + len(matchstr(getline(a:pos), '.', c - 1)) - 1
+endfunction
+
 " Helper:
 
 function! s:is_visual(mode) abort
@@ -212,28 +235,32 @@ function! s:get_pos_char() abort
     return getline('.')[col('.')-1]
 endfunction
 
-"@ return int index of cursor in cword
-function! s:get_pos_in_cword(cword)
-    if s:is_visual(mode())
-        return 0
-    else
-        return col('.') - searchpos(a:cword, 'bcnp')[1]
-    endif
+" @return int index of cursor in cword
+function! s:get_pos_in_cword(cword, ...) abort
+    return (s:is_visual(get(a:, 1, mode(1))) || s:get_pos_char() !~# '\k') ? 0
+    \   : s:count_char(searchpos(a:cword, 'bcn')[1], s:get_multi_col('.'))
 endfunction
 
-function! s:sort_num(xs) abort
-    " 7.4.341
-    " http://ftp.vim.org/vim/patches/7.4/7.4.341
-    if v:version > 704 || v:version == 704 && has('patch341')
+" multibyte aware
+function! s:count_char(from, to) abort
+    let chars = getline('.')[a:from-1:a:to-1]
+    return len(split(chars, '\zs')) - 1
+endfunction
+
+" 7.4.341
+" http://ftp.vim.org/vim/patches/7.4/7.4.341
+if v:version > 704 || v:version == 704 && has('patch341')
+    function! s:sort_num(xs) abort
         return sort(a:xs, 'n')
-    else
+    endfunction
+else
+    function! s:_sort_num_func(x, y) abort
+        return a:x - a:y
+    endfunction
+    function! s:sort_num(xs) abort
         return sort(a:xs, 's:_sort_num_func')
-    endif
-endfunction
-
-function! s:_sort_num_func(x, y) abort
-    return a:x - a:y
-endfunction
+    endfunction
+endif
 
 function! s:sort_pos(pos_list) abort
     " pos_list: [ [x1, y1], [x2, y2] ]
