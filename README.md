@@ -26,6 +26,10 @@ Search selected text.
 ### 3. Use smartcase unlike default one
 Default behavior, which see ignorecase and not smartcase, is not intuitive.
 
+### 4. Keep cursor position across matches
+Keeping cursor position while itering over matches is handy or refactoring.
+Tips: ```nmap § .n``` will allow you to use asterisk as multiple cursors in a vim way
+
 Installation
 ------------
 
@@ -64,6 +68,11 @@ map *  <Plug>(asterisk-z*)
 map #  <Plug>(asterisk-z#)
 map g* <Plug>(asterisk-gz*)
 map g# <Plug>(asterisk-gz#)
+yy```
+
+To enable keepCursor feature:
+```vim
+let g:asterisk#keeppos = 1
 ```
 
 Special thanks
