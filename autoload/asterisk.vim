@@ -40,11 +40,12 @@ let g:asterisk#keeppos = get(g:, 'asterisk#keeppos', s:FALSE)
 let s:_config = {
 \   'direction' : s:DIRECTION.forward,
 \   'do_jump' : s:TRUE,
-\   'is_whole' : s:TRUE
+\   'is_whole' : s:TRUE,
+\   'keeppos': s:FALSE
 \ }
 
 function! s:default_config() abort
-    return deepcopy(s:_config)
+    return extend(deepcopy(s:_config), {'keeppos': g:asterisk#keeppos})
 endfunction
 
 " @return command: String
@@ -65,12 +66,12 @@ function! asterisk#do(mode, config) abort
     \   s:convert_2_word_pattern_4_visual(cword, config) : s:cword_pattern(cword, config))
     let key = (config.direction is s:DIRECTION.forward ? '/' : '?')
     " Get offset in current word
-    let offset = g:asterisk#keeppos ? s:get_pos_in_cword(cword, a:mode) : 0
+    let offset = config.keeppos ? s:get_pos_in_cword(cword, a:mode) : 0
     let pattern_offseted = pattern . (offset is 0 ? '' : key . 's+' . offset)
     let search_cmd = pre . key . pattern_offseted
     if config.do_jump
         return search_cmd . "\<CR>"
-    elseif g:asterisk#keeppos && offset isnot 0
+    elseif config.keeppos && offset isnot 0
         let echo = printf('echo "%s"', pattern_offseted)
         " XXX: it cause flick if the next match is not in the current window.
         let restore = s:restore_pos_cmd()
