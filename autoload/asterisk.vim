@@ -88,7 +88,7 @@ function! asterisk#do(mode, config) abort
 endfunction
 
 "" For keeppos feature
-function! asterisk#restore()
+function! asterisk#restore() abort
     call winrestview(s:w)
 endfunction
 
