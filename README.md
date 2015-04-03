@@ -16,15 +16,22 @@ asterisk.vim provides improved * motions.
 ### 1. stay star motions (z prefixed mappings)
 z star motions doesn't move your cursor.
 
-![](https://github.com/haya14busa/i/raw/master/vim-asterisk/asterisk_z_star.gif)
+![](https://raw.githubusercontent.com/haya14busa/i/master/vim-asterisk/asterisk_z_star.gif)
 
 ### 2. visual star motions
 Search selected text.
 
-![](https://github.com/haya14busa/i/raw/master/vim-asterisk/asterisk_visual_star.gif)
+![](https://raw.githubusercontent.com/haya14busa/i/master/vim-asterisk/asterisk_visual_star.gif)
 
 ### 3. Use smartcase unlike default one
 Default behavior, which see ignorecase and not smartcase, is not intuitive.
+
+### 4. Keep cursor position across matches
+Keeping cursor position while itering over matches is handy for refactoring.
+
+![](https://raw.githubusercontent.com/haya14busa/i/master/vim-asterisk/asterisk_keeppos.gif)
+
+Tips: `nmap § ` will allow you to use asterisk as multiple cursors in a vim way
 
 Installation
 ------------
@@ -64,6 +71,11 @@ map *  <Plug>(asterisk-z*)
 map #  <Plug>(asterisk-z#)
 map g* <Plug>(asterisk-gz*)
 map g# <Plug>(asterisk-gz#)
+```
+
+To enable keepCursor feature:
+```vim
+let g:asterisk#keeppos = 1
 ```
 
 Special thanks

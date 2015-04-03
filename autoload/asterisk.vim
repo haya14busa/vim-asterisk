@@ -33,16 +33,19 @@ let s:FALSE = 0
 let s:INT = { 'MAX': 2147483647 }
 let s:DIRECTION = { 'forward': 1, 'backward': 0 } " see :h v:searchforward
 
+let g:asterisk#keeppos = get(g:, 'asterisk#keeppos', s:FALSE)
+
 " do_jump: do not move cursor
 " is_whole: is_whole word. false if `g` flag given (e.g. * -> true, g* -> false)
 let s:_config = {
 \   'direction' : s:DIRECTION.forward,
 \   'do_jump' : s:TRUE,
-\   'is_whole' : s:TRUE
+\   'is_whole' : s:TRUE,
+\   'keeppos': s:FALSE
 \ }
 
 function! s:default_config() abort
-    return deepcopy(s:_config)
+    return extend(deepcopy(s:_config), {'keeppos': g:asterisk#keeppos})
 endfunction
 
 " @return command: String
@@ -61,13 +64,41 @@ function! asterisk#do(mode, config) abort
     " Including \<\> if necessary
     let pattern = (is_visual ?
     \   s:convert_2_word_pattern_4_visual(cword, config) : s:cword_pattern(cword, config))
+    let key = (config.direction is s:DIRECTION.forward ? '/' : '?')
+    " Get offset in current word
+    let offset = config.keeppos ? s:get_pos_in_cword(cword, a:mode) : 0
+    let pattern_offseted = pattern . (offset is 0 ? '' : key . 's+' . offset)
+    let search_cmd = pre . key . pattern_offseted
     if config.do_jump
-        let key = (config.direction is s:DIRECTION.forward ? '/' : '?')
-        return pre . key . pattern . "\<CR>"
-    else
+        return search_cmd . "\<CR>"
+    elseif config.keeppos && offset isnot 0
+        " Do not jump with keeppos feature
+        let echo = printf('echo "%s"', pattern_offseted)
+        let restore = s:restore_pos_cmd()
+        "" *premove* & *aftermove* : not to cause flickr as mush as possible
+        " flick corner case: `#` with under cursor word at the top of window
+        " and the cursor is at the end of the word.
+        let premove = 'm`' . (config.direction is s:DIRECTION.forward ? '0' : '$')
+        let aftermove = "\<C-o>"
+        return printf("%s%s\<CR>%s:%s | %s\<CR>", premove, search_cmd, aftermove, restore, echo)
+    else " Do not jump: Just handle search related
         call s:set_search(pattern)
         return s:generate_set_search_cmd(pattern, pre, config)
     endif
+endfunction
+
+"" For keeppos feature
+function! asterisk#restore() abort
+    call winrestview(s:w)
+endfunction
+
+function! s:set_view(view) abort
+    let s:w = a:view
+endfunction
+
+function! s:restore_pos_cmd() abort
+    call s:set_view(winsaveview())
+    return 'call asterisk#restore()'
 endfunction
 
 " @return \<cword\>: String
@@ -148,14 +179,13 @@ function! s:should_plus_one_count(cword, config, mode) abort
     " cword
     return s:is_visual(a:mode) ? s:FALSE
     \   : a:config.direction is# s:DIRECTION.backward
-    \   ? s:get_pos_char() =~# '\k' && ! s:is_head_of_cword(a:cword)
+    \   ? s:get_pos_char() =~# '\k' && ! s:is_head_of_cword(a:cword) && ! a:config.keeppos
     \   : s:get_pos_char() !~# '\k'
 endfunction
 
 " @return boolean
 function! s:is_head_of_cword(cword) abort
-    let c = col('.')
-    return a:cword is# getline(line('.'))[c - 1 : c + strlen(a:cword) - 2]
+    return 0 == s:get_pos_in_cword(a:cword)
 endfunction
 
 " Assume the current mode is middle of visual mode.
@@ -196,6 +226,11 @@ function! s:get_multibyte_aware_col(pos) abort
     return c + d
 endfunction
 
+function! s:get_multi_col(pos) abort
+    let c = col(a:pos)
+    return c + len(matchstr(getline(a:pos), '.', c - 1)) - 1
+endfunction
+
 " Helper:
 
 function! s:is_visual(mode) abort
@@ -206,19 +241,32 @@ function! s:get_pos_char() abort
     return getline('.')[col('.')-1]
 endfunction
 
-function! s:sort_num(xs) abort
-    " 7.4.341
-    " http://ftp.vim.org/vim/patches/7.4/7.4.341
-    if v:version > 704 || v:version == 704 && has('patch341')
-        return sort(a:xs, 'n')
-    else
-        return sort(a:xs, 's:_sort_num_func')
-    endif
+" @return int index of cursor in cword
+function! s:get_pos_in_cword(cword, ...) abort
+    return (s:is_visual(get(a:, 1, mode(1))) || s:get_pos_char() !~# '\k') ? 0
+    \   : s:count_char(searchpos(a:cword, 'bcn')[1], s:get_multi_col('.'))
 endfunction
 
-function! s:_sort_num_func(x, y) abort
-    return a:x - a:y
+" multibyte aware
+function! s:count_char(from, to) abort
+    let chars = getline('.')[a:from-1:a:to-1]
+    return len(split(chars, '\zs')) - 1
 endfunction
+
+" 7.4.341
+" http://ftp.vim.org/vim/patches/7.4/7.4.341
+if v:version > 704 || v:version == 704 && has('patch341')
+    function! s:sort_num(xs) abort
+        return sort(a:xs, 'n')
+    endfunction
+else
+    function! s:_sort_num_func(x, y) abort
+        return a:x - a:y
+    endfunction
+    function! s:sort_num(xs) abort
+        return sort(a:xs, 's:_sort_num_func')
+    endfunction
+endif
 
 function! s:sort_pos(pos_list) abort
     " pos_list: [ [x1, y1], [x2, y2] ]
@@ -237,3 +285,4 @@ unlet s:save_cpo
 " vim: expandtab softtabstop=4 shiftwidth=4
 " vim: foldmethod=marker
 " }}}
+
