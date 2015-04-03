@@ -85,6 +85,10 @@ USAGE							*asterisk-usage*
 	    - It works in visual mode in addition to |Normal| & |Visual|.
 	      Search selected text.
 	    - "z" prefixed mappings doesn't move the cursor.
+	    - You can keep cursor position while moving across matches
+		    By default this feature is disabeled but you can activate
+		    it by adding to your vimrc:
+			let g:asterisk#keeppos = 1
 
 	Example: Write following lines to your vimrc:
 >
@@ -122,6 +126,10 @@ CREDITS                                                    *asterisk-credits*
 
 ==============================================================================
 CHANGELOG						*asterisk-changelog*
+
+
+0.9.4	2015-02-05
+	- Add keepCursor option
 
 0.9.3	2014-12-10
 	- Fix multybite handling for visual-star feature.
