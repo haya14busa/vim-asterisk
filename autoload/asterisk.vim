@@ -174,7 +174,7 @@ function! s:should_plus_one_count(cword, config, mode) abort
     " cword
     return s:is_visual(a:mode) ? s:FALSE
     \   : a:config.direction is# s:DIRECTION.backward
-    \   ? s:get_pos_char() =~# '\k' && ! s:is_head_of_cword(a:cword)
+    \   ? s:get_pos_char() =~# '\k' && ! s:is_head_of_cword(a:cword) && ! a:config.keeppos
     \   : s:get_pos_char() !~# '\k'
 endfunction
 
