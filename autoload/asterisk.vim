@@ -75,11 +75,12 @@ function! asterisk#do(mode, config) abort
         " Do not jump with keeppos feature
         let echo = printf('echo "%s"', pattern_offseted)
         let restore = s:restore_pos_cmd()
-        "" *premove*: not to cause flickr as mush as possible
+        "" *premove* & *aftermove* : not to cause flickr as mush as possible
         " flick corner case: `#` with under cursor word at the top of window
         " and the cursor is at the end of the word.
-        let premove = (config.direction is s:DIRECTION.forward ? '0' : '$')
-        return printf("%s%s\<CR>:%s | %s\<CR>", premove, search_cmd, restore, echo)
+        let premove = 'm`' . (config.direction is s:DIRECTION.forward ? '0' : '$')
+        let aftermove = "\<C-o>"
+        return printf("%s%s\<CR>%s:%s | %s\<CR>", premove, search_cmd, aftermove, restore, echo)
     else " Do not jump: Just handle search related
         call s:set_search(pattern)
         return s:generate_set_search_cmd(pattern, pre, config)
@@ -87,10 +88,8 @@ function! asterisk#do(mode, config) abort
 endfunction
 
 "" For keeppos feature
-" mark jump m` for |premove| to override jumplist with `0` or `$`
 function! asterisk#restore()
     call winrestview(s:w)
-    normal! m`
 endfunction
 
 function! s:set_view(view) abort
