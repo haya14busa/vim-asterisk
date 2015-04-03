@@ -73,7 +73,7 @@ function! asterisk#do(mode, config) abort
         return search_cmd . "\<CR>"
     elseif config.keeppos && offset isnot 0
         " Do not jump with keeppos feature
-        let echo = printf('echo "%s"', pattern_offseted)
+        let echo = printf('echo "%s"', escape(pattern_offseted, '\'))
         let restore = s:restore_pos_cmd()
         "" *premove* & *aftermove* : not to cause flickr as mush as possible
         " flick corner case: `#` with under cursor word at the top of window
