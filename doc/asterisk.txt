@@ -1,10 +1,10 @@
 *asterisk.txt*	*-improved
 
 Author  : haya14busa <hayabusa1419@gmail.com>
-Version : 0.9.3
+Version : 1.0.0
 License : MIT license {{{
 
-	Copyright (c) 2014 haya14busa
+	Copyright (c) 2014-2015 haya14busa
 
 	Permission is hereby granted, free of charge, to any person obtaining
 	a copy of this software and associated documentation files (the
@@ -115,7 +115,7 @@ VARIABLES 					*asterisk-variables*
 g:asterisk#keeppos					*g:asterisk#keeppos*
 	You can keep cursor position while moving across matches.
 	By default this feature is disabeled but you can activate
-	it by adding to your vimrc: 
+	it by adding to your vimrc:
 >
 		let g:asterisk#keeppos = 1
 
@@ -138,11 +138,15 @@ CREDITS							*asterisk-credits*
 CHANGELOG						*asterisk-changelog*
 
 
-0.9.4	2015-02-05
-	- Add keepCursor option
+1.0.0	2015-04-04
+	- Add keepCursor feature. |g:asterisk#keeppos|. This feature is based
+	  on @pelodelfuego's work! https://github.com/pelodelfuego
+	- Add test
+	- Fix minor bug and now it's stable
 
 0.9.3	2014-12-10
-	- Fix multybite handling for visual-star feature.
+	- Fix multybite handling for visual-star feature. This fix is made by
+	  @presuku! https://github.com/presuku
 	- Fix |v| selection over multi lines.
 
 0.9.2	2014-12-01
