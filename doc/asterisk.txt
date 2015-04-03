@@ -114,7 +114,7 @@ VARIABLES 					*asterisk-variables*
 
 g:asterisk#keeppos					*g:asterisk#keeppos*
 	You can keep cursor position while moving across matches.
-	By default this feature is disabeled but you can activate
+	By default this feature is disabled but you can activate
 	it by adding to your vimrc:
 >
 		let g:asterisk#keeppos = 1
