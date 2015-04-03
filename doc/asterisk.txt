@@ -31,6 +31,8 @@ CONTENTS				*asterisk-contents*
 	Introduction			|asterisk-introduction|
 	Install				|asterisk-install|
 	Usage				|asterisk-usage|
+	  Key Mappings			  |asterisk-key-mappings|
+	  Variables			  |asterisk-variables|
 	Known Issues			|asterisk-known-issues|
 	ChangeLog			|asterisk-changelog|
 
@@ -65,7 +67,10 @@ INSTALL						    *asterisk-install*
 
 
 ==============================================================================
-USAGE							*asterisk-usage*
+USAGE						*asterisk-usage*
+
+------------------------------------------------------------------------------
+KEY MAPPINGS 					*asterisk-key-mappings*
 
 <Plug>(asterisk-*)  					*<Plug>(asterisk-star)*
 <Plug>(asterisk-#)     					*<Plug>(asterisk-#)*
@@ -85,10 +90,6 @@ USAGE							*asterisk-usage*
 	    - It works in visual mode in addition to |Normal| & |Visual|.
 	      Search selected text.
 	    - "z" prefixed mappings doesn't move the cursor.
-	    - You can keep cursor position while moving across matches
-		    By default this feature is disabeled but you can activate
-		    it by adding to your vimrc:
-			let g:asterisk#keeppos = 1
 
 	Example: Write following lines to your vimrc:
 >
@@ -108,6 +109,15 @@ USAGE							*asterisk-usage*
 		map g* <Plug>(asterisk-gz*)
 		map g# <Plug>(asterisk-gz#)
 <
+------------------------------------------------------------------------------
+VARIABLES 					*asterisk-variables*
+
+g:asterisk#keeppos					*g:asterisk#keeppos*
+	You can keep cursor position while moving across matches.
+	By default this feature is disabeled but you can activate
+	it by adding to your vimrc: 
+>
+		let g:asterisk#keeppos = 1
 
 ==============================================================================
 KNOWN ISSUES						*asterisk-issues*
@@ -117,7 +127,7 @@ KNOWN ISSUES						*asterisk-issues*
 
 
 ==============================================================================
-CREDITS                                                    *asterisk-credits*
+CREDITS							*asterisk-credits*
 
 |asterisk.vim| uses the code from vim-visualstar for visual star feature.
 
