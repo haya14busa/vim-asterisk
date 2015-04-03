@@ -72,19 +72,25 @@ function! asterisk#do(mode, config) abort
     if config.do_jump
         return search_cmd . "\<CR>"
     elseif config.keeppos && offset isnot 0
+        " Do not jump with keeppos feature
         let echo = printf('echo "%s"', pattern_offseted)
-        " XXX: it cause flick if the next match is not in the current window.
         let restore = s:restore_pos_cmd()
-        return printf("%s\<CR>:%s | %s\<CR>", search_cmd, restore, echo)
-    else
+        "" *premove*: not to cause flickr as mush as possible
+        " flick corner case: `#` with under cursor word at the top of window
+        " and the cursor is at the end of the word.
+        let premove = (config.direction is s:DIRECTION.forward ? '0' : '$')
+        return printf("%s%s\<CR>:%s | %s\<CR>", premove, search_cmd, restore, echo)
+    else " Do not jump: Just handle search related
         call s:set_search(pattern)
         return s:generate_set_search_cmd(pattern, pre, config)
     endif
 endfunction
 
-"" return last position for stay command with offset
-function! asterisk#w() abort
-    return get(s:, 'w', winsaveview())
+"" For keeppos feature
+" mark jump m` for |premove| to override jumplist with `0` or `$`
+function! asterisk#restore()
+    call winrestview(s:w)
+    normal! m`
 endfunction
 
 function! s:set_view(view) abort
@@ -93,7 +99,7 @@ endfunction
 
 function! s:restore_pos_cmd() abort
     call s:set_view(winsaveview())
-    return 'call winrestview(asterisk#w())'
+    return 'call asterisk#restore()'
 endfunction
 
 " @return \<cword\>: String
