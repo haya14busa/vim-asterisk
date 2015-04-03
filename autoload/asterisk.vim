@@ -180,7 +180,7 @@ endfunction
 
 " @return boolean
 function! s:is_head_of_cword(cword) abort
-    return 0 == get_pos_in_cword(a:cword)
+    return 0 == s:get_pos_in_cword(a:cword)
 endfunction
 
 " Assume the current mode is middle of visual mode.
