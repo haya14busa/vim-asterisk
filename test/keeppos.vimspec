@@ -62,10 +62,17 @@ Describe basic_asterisk
   End
 
   Describe keeppos #
-    It search forward with \<\> keeping cursor position
+    It search backward with \<\> keeping cursor position
       normal! 3l
       normal #
       Assert Equals(histget('/', -1), '\<asterisk\>?s+3')
+    End
+    It search backward and correct count at the end of word
+      normal! $
+      normal #
+      Assert Equals(histget('/', -1), '\<asterisk\>?s+7')
+      normal! 9h
+      Assert Equals(g:Get_pos_char(), '2')
     End
     It keep cursor position without offset
       normal #
