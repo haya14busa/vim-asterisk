@@ -118,6 +118,8 @@ g:asterisk#keeppos					*g:asterisk#keeppos*
 	it by adding to your vimrc:
 >
 		let g:asterisk#keeppos = 1
+<
+	Default: 0
 
 ==============================================================================
 KNOWN ISSUES						*asterisk-issues*

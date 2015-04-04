@@ -29,7 +29,7 @@ Default behavior, which see ignorecase and not smartcase, is not intuitive.
 ### 4. Keep cursor position across matches
 Keeping cursor position while itering over matches is handy for refactoring.
 
-Add following line in your vimrc to enable this feature. `let g:asterisk#keeppos = 1`
+Add following line in your vimrc to enable this feature. `let g:asterisk#keeppos = 1` Default: 0
 
 ![](https://raw.githubusercontent.com/haya14busa/i/master/vim-asterisk/asterisk_keeppos.gif)
 
