@@ -53,7 +53,7 @@ function! asterisk#do(mode, config) abort
     let config = extend(s:default_config(), a:config)
     let is_visual = s:is_visual(a:mode)
     " Raw cword without \<\>
-    let cword = (is_visual ? s:get_selected_text() : expand('<cword>'))
+    let cword = s:escape_pattern((is_visual ? s:get_selected_text() : expand('<cword>')))
     if cword is# ''
         return s:generate_error_cmd(is_visual)
     endif
@@ -101,9 +101,9 @@ function! s:restore_pos_cmd() abort
     return 'call asterisk#restore()'
 endfunction
 
-" @return \<cword\>: String
+" @return \<cword\> if needed: String
 function! s:cword_pattern(cword, config) abort
-    return printf((a:config.is_whole ? '\<%s\>' : '%s'), a:cword)
+    return printf((a:config.is_whole && a:cword =~# '\k' ? '\<%s\>' : '%s'), a:cword)
 endfunction
 
 " This function is based on https://github.com/thinca/vim-visualstar
@@ -275,6 +275,11 @@ endfunction
 
 function! s:compare_pos(x, y) abort
     return max([-1, min([1,(a:x[0] == a:y[0]) ? a:x[1] - a:y[1] : a:x[0] - a:y[0]])])
+endfunction
+
+" taken from :h Vital.Prelude.escape_pattern()
+function! s:escape_pattern(str) abort
+    return escape(a:str, '~"\.^$[]*')
 endfunction
 
 " Restore 'cpoptions' {{{
