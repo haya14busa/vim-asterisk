@@ -7,6 +7,8 @@ Describe basic_asterisk
         \   , '4.Asterisk 5.AsteRisK 6.Asterisk'
         \   , ''
         \   , '7.アスタリスク 8.アスタリスクです 9.アスタリスク?'
+        \   , '.* .* .*'
+        \   , '.* asterisk asterisk'
         \ ]
         call g:Add_lines(lines)
     End
@@ -52,6 +54,20 @@ Describe basic_asterisk
             normal! 2j
             Throws /E348: No string under cursor/ :normal *
         End
+
+        Context regular expression handline
+          It use regular expression characters under cursor if there are no keyword word after them
+            normal! 4j0
+            normal *
+            Assert Equals(@/, '\.\*')
+          End
+          It do not use regular expression characters under cursor if there are keyword words after them
+            normal! 5j0
+            normal *
+            Assert Equals(@/, '\<asterisk\>')
+          End
+        End
+
     End
 
     Context g*
