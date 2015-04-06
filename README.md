@@ -24,10 +24,10 @@ Search selected text.
 ![](https://raw.githubusercontent.com/haya14busa/i/master/vim-asterisk/asterisk_visual_star.gif)
 
 ### 3. Use smartcase unlike default one
-Default behavior, which see ignorecase and not smartcase, is not intuitive.
+Default behavior, which sees ignorecase and not smartcase, is not intuitive.
 
 ### 4. Keep cursor position across matches
-Keeping cursor position while itering over matches is handy for refactoring.
+It is handy for refactoring to keep cursor position while iterating over matches.
 
 Add following line in your vimrc to enable this feature. `let g:asterisk#keeppos = 1` Default: 0
 
