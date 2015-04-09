@@ -53,6 +53,10 @@ Describe visual
             normal 3jlv2l*
             Assert Equals(@/, '\Vスタリ')
         End
+        It handle one character selection
+            normal 3jv*
+            Assert Equals(@/, '\V\<ア')
+        End
     End
 
 End
