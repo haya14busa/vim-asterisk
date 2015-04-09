@@ -23,7 +23,9 @@ Describe visual
 
     Context *
         It search forward with \<\>
-            normal viw*
+            " 'selection' handling
+            " normal viw*
+            normal evb*
             Assert Equals(@/, '\V\<asterisk\>')
         End
         It search forward only with \<
@@ -31,7 +33,9 @@ Describe visual
             Assert Equals(@/, '\V\<ast')
         End
         It search forward only with \>
-            normal 2lve*
+            " 'selection' handling
+            " normal 2lve*
+            normal 2lmmev`m*
             Assert Equals(@/, '\Vterisk\>')
         End
     End
@@ -46,7 +50,8 @@ Describe visual
             Assert Equals(@/, '\Vリスク\>')
         End
         It handle left and right keyword
-            normal 3jve*
+            " 'selection' handling
+            normal 3jevb*
             Assert Equals(@/, '\V\<アスタリスク\>')
         End
         It is irrelabant with keyword
