@@ -1,4 +1,5 @@
 call themis#option('recursive', 1)
+set selection=exclusive 
 
 let g:Expect = themis#helper('expect')
 call themis#helper('command').with(themis#helper('assert')).with({'Expect': g:Expect})
