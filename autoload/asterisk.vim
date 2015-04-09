@@ -197,7 +197,10 @@ function! s:get_selected_text(...) abort
     let current_pos = [line('.'), end_col]
     let other_end_pos = [line('v'), s:get_multibyte_aware_col('v')]
     let [begin, end] = s:sort_pos([current_pos, other_end_pos])
-    if mode ==# "\<C-v>"
+    if mode !=# 'V' && begin ==# end
+        " multibyte handling for one char selection
+        let lines = [matchstr(getline(begin[0]), printf('\%%%dc.', begin[1]))]
+    elseif mode ==# "\<C-v>"
         let [min_c, max_c] = s:sort_num([begin[1], end[1]])
         let lines = map(range(begin[0], end[0]), '
         \   getline(v:val)[min_c - 1 : max_c - 1]
