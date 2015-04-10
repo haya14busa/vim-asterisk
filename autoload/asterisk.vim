@@ -80,7 +80,10 @@ function! asterisk#do(mode, config) abort
         "" *premove* & *aftermove* : not to cause flickr as mush as possible
         " flick corner case: `#` with under cursor word at the top of window
         " and the cursor is at the end of the word.
-        let premove = 'm`' . (config.direction is s:DIRECTION.forward ? '0' : '$')
+        let premove =
+        \   (a:mode isnot# 'n' ? "\<Esc>" : '')
+        \   . 'm`'
+        \   . (config.direction is s:DIRECTION.forward ? '0' : '$')
         let aftermove = "\<C-o>"
         " NOTE: To avoid hit-enter prompt, it execute `restore` and `echo`
         " command separately. I can also implement one function and call it
