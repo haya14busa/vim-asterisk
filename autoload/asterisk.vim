@@ -91,7 +91,7 @@ function! asterisk#do(mode, config) abort
         return printf("%s%s\<CR>%s:%s\<CR>:%s\<CR>", premove, search_cmd, aftermove, restore, echo)
     else " Do not jump: Just handle search related
         call s:set_search(pattern)
-        return s:generate_set_search_cmd(pattern, pre, config)
+        return s:generate_set_search_cmd(pattern, a:mode, config)
     endif
 endfunction
 
@@ -163,14 +163,15 @@ endfunction
 "" Generate command to turn on search related option like hlsearch to work
 " with :h function-search-undo
 " @return command: String
-function! s:generate_set_search_cmd(pattern, pre, config) abort
+function! s:generate_set_search_cmd(pattern, mode, config) abort
     " :h function-search-undo
     " :h v:hlsearch
     " :h v:searchforward
     let hlsearch = 'let &hlsearch=&hlsearch'
     let searchforward = printf('let v:searchforward = %d', a:config.direction)
     let echo = printf('echo "%s"', escape(a:pattern, '\'))
-    return printf("%s:\<C-u>%s | %s | %s\<CR>", a:pre, hlsearch, searchforward, echo)
+    let esc = (a:mode isnot# 'n' ? "\<Esc>" : '')
+    return printf("%s:\<C-u>%s\<CR>:%s\<CR>:%s\<CR>", esc, hlsearch, searchforward, echo)
 endfunction
 
 "" Generate command to show error with empty pattern
