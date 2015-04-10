@@ -88,7 +88,10 @@ function! asterisk#do(mode, config) abort
 endfunction
 
 "" For keeppos feature
-function! asterisk#restore() abort
+" NOTE: To avoid hit-enter prompt, this function name should be as short as
+" possible. `r` is short for restore. Should I use more short function using
+" basic global function instead of autoload one.
+function! asterisk#r() abort
     call winrestview(s:w)
 endfunction
 
@@ -98,7 +101,7 @@ endfunction
 
 function! s:restore_pos_cmd() abort
     call s:set_view(winsaveview())
-    return 'call asterisk#restore()'
+    return 'call asterisk#r()'
 endfunction
 
 " @return \<cword\> if needed: String
