@@ -72,7 +72,9 @@ function! asterisk#do(mode, config) abort
     if config.do_jump
         return search_cmd . "\<CR>"
     elseif config.keeppos && offset isnot 0
-        " Do not jump with keeppos feature
+        "" Do not jump with keeppos feature
+        " NOTE: It doesn't move cursor, so we can assume it works with
+        " operator pending mode even if it returns command to execute.
         let echo = printf("echo '%s'", pattern_offseted)
         let restore = s:restore_pos_cmd()
         "" *premove* & *aftermove* : not to cause flickr as mush as possible
@@ -80,7 +82,10 @@ function! asterisk#do(mode, config) abort
         " and the cursor is at the end of the word.
         let premove = 'm`' . (config.direction is s:DIRECTION.forward ? '0' : '$')
         let aftermove = "\<C-o>"
-        return printf("%s%s\<CR>%s:%s | %s\<CR>", premove, search_cmd, aftermove, restore, echo)
+        " NOTE: To avoid hit-enter prompt, it execute `restore` and `echo`
+        " command separately. I can also implement one function and call it
+        " once instead of separately, should I do this?
+        return printf("%s%s\<CR>%s:%s\<CR>:%s\<CR>", premove, search_cmd, aftermove, restore, echo)
     else " Do not jump: Just handle search related
         call s:set_search(pattern)
         return s:generate_set_search_cmd(pattern, pre, config)
@@ -88,7 +93,10 @@ function! asterisk#do(mode, config) abort
 endfunction
 
 "" For keeppos feature
-function! asterisk#restore() abort
+" NOTE: To avoid hit-enter prompt, this function name should be as short as
+" possible. `r` is short for restore. Should I use more short function using
+" basic global function instead of autoload one.
+function! asterisk#r() abort
     call winrestview(s:w)
 endfunction
 
@@ -98,7 +106,7 @@ endfunction
 
 function! s:restore_pos_cmd() abort
     call s:set_view(winsaveview())
-    return 'call asterisk#restore()'
+    return 'call asterisk#r()'
 endfunction
 
 " @return \<cword\> if needed: String
