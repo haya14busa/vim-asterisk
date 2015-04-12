@@ -197,9 +197,14 @@ function! s:get_selected_text(...) abort
     let current_pos = [line('.'), end_col]
     let other_end_pos = [line('v'), s:get_multibyte_aware_col('v')]
     let [begin, end] = s:sort_pos([current_pos, other_end_pos])
+    if &selection ==# 'exclusive'
+        if begin[1] == -1 && end[1] == -1
+            return ''
+        endif
+    endif
     if mode !=# 'V' && begin ==# end
         " multibyte handling for one char selection
-        let lines = [matchstr(getline(begin[0]), printf('\%%%dc.', begin[1]))]
+        let lines = [matchstr(getline(begin[0]), '.', begin[1]-1)]
     elseif mode ==# "\<C-v>"
         let [min_c, max_c] = s:sort_num([begin[1], end[1]])
         let lines = map(range(begin[0], end[0]), '
@@ -223,9 +228,15 @@ endfunction
 function! s:get_multibyte_aware_col(pos) abort
     let [pos, other] = [a:pos, a:pos is '.' ? 'v' : '.']
     let c = col(pos)
-    let d = s:compare_pos(getpos(pos)[1:2], getpos(other)[1:2]) > 0
-    \   ? len(matchstr(getline(pos), '.', c - 1)) - 1
-    \   : 0
+    let d = 0
+    let result = s:compare_pos(getpos(pos)[1:2], getpos(other)[1:2])
+    let [c1, c2] = &selection is 'exclusive' ? [c - 1, -1] : [c, c]
+    if result > 0
+        let c = c1
+        let d = len(matchstr(getline(pos), '.', c - 1)) - 1
+    elseif result == 0
+        let c = c2
+    endif
     return c + d
 endfunction
 
