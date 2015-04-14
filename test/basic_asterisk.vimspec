@@ -55,7 +55,7 @@ Describe basic_asterisk
             Throws /E348: No string under cursor/ :normal *
         End
 
-        Context regular expression handline
+        Context regular expression handling
           It use regular expression characters under cursor if there are no keyword word after them
             normal! 4j0
             normal *
