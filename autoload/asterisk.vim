@@ -53,7 +53,7 @@ function! asterisk#do(mode, config) abort
     let config = extend(s:default_config(), a:config)
     let is_visual = s:is_visual(a:mode)
     " Raw cword without \<\>
-    let cword = s:escape_pattern((is_visual ? s:get_selected_text() : expand('<cword>')))
+    let cword = (is_visual ? s:get_selected_text() : s:escape_pattern(expand('<cword>')))
     if cword is# ''
         return s:generate_error_cmd(is_visual)
     endif
