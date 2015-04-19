@@ -52,7 +52,7 @@ Describe zstar
             :1
             Assert Equals(g:Get_pos_char(), 'N')
             let &selection=v
-            normal v2lo*
+            normal ve6ho*
             Assert Equals(histget('/', -1), '\V\<Neo')
           endfor
           let &selection = save
