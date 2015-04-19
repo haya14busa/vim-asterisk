@@ -129,7 +129,7 @@ function! s:convert_2_word_pattern_4_visual(pattern, config) abort
         let tail = matchstr(text, '.$')
         let is_tail_multibyte = 1 < len(tail)
         let [l, col] = tail_pos
-        let col += len(tail) - 1
+        let col += &selection is 'exclusive' ? - 1 : len(tail) - 1
         let line = getline(l)
         let after = line[col :]
         let outer = matchstr(after, '^.')
