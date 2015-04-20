@@ -169,7 +169,7 @@ function! s:generate_set_search_cmd(pattern, mode, config) abort
     " :h v:searchforward
     let hlsearch = 'let &hlsearch=&hlsearch'
     let searchforward = printf('let v:searchforward = %d', a:config.direction)
-    let echo = printf("echo '%s'", a:pattern)
+    let echo = printf('echo "%s"', escape(a:pattern, '"\'))
     let esc = (a:mode isnot# 'n' ? "\<Esc>" : '')
     return printf("%s:\<C-u>%s\<CR>:%s\<CR>:%s\<CR>", esc, hlsearch, searchforward, echo)
 endfunction
