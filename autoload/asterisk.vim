@@ -219,8 +219,6 @@ function! s:get_selected_text(...) abort
         let end[1] -= 1
     endif
     if mode !=# 'V' && begin ==# end
-        " NOTE: return empty string for :set selection=exclusive if the cursor
-        " is not moved
         let lines = [s:get_pos_char(begin)]
     elseif mode ==# "\<C-v>"
         let [min_c, max_c] = s:sort_num([begin[1], end[1]])
