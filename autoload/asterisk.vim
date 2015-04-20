@@ -75,8 +75,8 @@ function! asterisk#do(mode, config) abort
         "" Do not jump with keeppos feature
         " NOTE: It doesn't move cursor, so we can assume it works with
         " operator pending mode even if it returns command to execute.
-        let echo = printf("echo '%s'", pattern_offseted)
-        let restore = s:restore_pos_cmd()
+        let echo = s:generate_echo_cmd(pattern_offseted)
+        let restore = s:generate_restore_pos_cmd()
         "" *premove* & *aftermove* : not to cause flickr as mush as possible
         " flick corner case: `#` with under cursor word at the top of window
         " and the cursor is at the end of the word.
@@ -107,7 +107,8 @@ function! s:set_view(view) abort
     let s:w = a:view
 endfunction
 
-function! s:restore_pos_cmd() abort
+" @return restore_position_command: String
+function! s:generate_restore_pos_cmd() abort
     call s:set_view(winsaveview())
     return 'call asterisk#r()'
 endfunction
@@ -169,9 +170,14 @@ function! s:generate_set_search_cmd(pattern, mode, config) abort
     " :h v:searchforward
     let hlsearch = 'let &hlsearch=&hlsearch'
     let searchforward = printf('let v:searchforward = %d', a:config.direction)
-    let echo = printf('echo "%s"', escape(a:pattern, '"\'))
+    let echo = s:generate_echo_cmd(a:pattern)
     let esc = (a:mode isnot# 'n' ? "\<Esc>" : '')
     return printf("%s:\<C-u>%s\<CR>:%s\<CR>:%s\<CR>", esc, hlsearch, searchforward, echo)
+endfunction
+
+" @return echo_command: String
+function! s:generate_echo_cmd(message) abort
+    return printf('echo "%s"', escape(a:message, '\"'))
 endfunction
 
 "" Generate command to show error with empty pattern
