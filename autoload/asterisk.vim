@@ -127,7 +127,7 @@ function! s:convert_2_word_pattern_4_visual(pattern, config) abort
     let type = (a:config.direction is# s:DIRECTION.forward ? '/' : '?')
     let [pre, post] = ['', '']
     if a:config.is_whole
-        let [head_pos, tail_pos] = s:sort_pos([getpos('.')[1:2], getpos('v')[1:2]])
+        let [head_pos, tail_pos] = s:sort_pos([s:getcoord('.'), s:getcoord('v')])
         let head = matchstr(text, '^.')
         let is_head_multibyte = 1 < len(head)
         let [l, col] = head_pos
@@ -247,7 +247,7 @@ function! s:get_multibyte_aware_col(pos) abort
     let [pos, other] = [a:pos, a:pos is '.' ? 'v' : '.']
     let c = col(pos)
     let d = 0
-    let result = s:compare_pos(getpos(pos)[1:2], getpos(other)[1:2])
+    let result = s:compare_pos(s:getcoord(pos), s:getcoord(other))
     let [c1, c2] = &selection is 'exclusive' ? [c - 1, -1] : [c, c]
     if result > 0
         let c = c1
@@ -267,6 +267,11 @@ endfunction
 
 function! s:is_visual(mode) abort
     return a:mode =~# "[vV\<C-v>]"
+endfunction
+
+" @return coordinate: [Number, Number]
+function! s:getcoord(expr) abort
+    return getpos(a:expr)[1:2]
 endfunction
 
 function! s:get_pos_char() abort
