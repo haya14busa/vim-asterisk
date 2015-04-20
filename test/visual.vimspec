@@ -9,7 +9,7 @@ Describe visual
         \   , '7.アスタリスク 8.アスタリスクです 9.アスタリスク?'
         \   , '.* .* .*'
         \   , '.* asterisk asterisk'
-        \   , '".*" ".*" "asterisk" "asterisk"'
+        \   , '".*" ".*" ''asterisk'' ''asterisk'''
         \   , '"''.*" "''.*" "aste"risk" "aste"risk"'
         \ ]
         call g:Add_lines(lines)
@@ -81,6 +81,11 @@ Describe visual
           normal! 6j0
           normal viW*
           Assert Equals(@/, '\V".*"')
+        End
+        It correctly handle single quotes with z*
+          normal! 6j02W
+          normal viWz*
+          Assert Equals(@/, '\V''asterisk''')
         End
     End
 
