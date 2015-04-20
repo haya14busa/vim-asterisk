@@ -141,7 +141,7 @@ function! s:convert_2_word_pattern_4_visual(pattern, config) abort
         let tail = matchstr(text, '.$')
         let is_tail_multibyte = 1 < len(tail)
         let [l, col] = tail_pos
-        let col += &selection is 'exclusive' ? - 1 : len(tail) - 1
+        let col += s:is_exclusive() ? - 1 : len(tail) - 1
         let line = getline(l)
         let after = line[col :]
         let outer = matchstr(after, '^.')
@@ -210,18 +210,18 @@ endfunction
 " @return selected text
 function! s:get_selected_text(...) abort
     let mode = get(a:, 1, mode(1))
-    let end_col = winsaveview().curswant is s:INT.MAX ?
-    \   s:INT.MAX : s:get_multibyte_aware_col('.')
+    let end_col = s:curswant() is s:INT.MAX ? s:INT.MAX : s:get_col_in_visual('.')
     let current_pos = [line('.'), end_col]
-    let other_end_pos = [line('v'), s:get_multibyte_aware_col('v')]
+    let other_end_pos = [line('v'), s:get_col_in_visual('v')]
     let [begin, end] = s:sort_pos([current_pos, other_end_pos])
-    if &selection ==# 'exclusive'
-        if begin[1] == -1 && end[1] == -1
-            return ''
-        endif
+    if s:is_exclusive() && begin isnot# end
+        " Decrement column number for :set selection=exclusive
+        let end[1] -= 1
     endif
     if mode !=# 'V' && begin ==# end
-        let lines = [s:get_pos_char(begin)]
+        " NOTE: return empty string for :set selection=exclusive if the cursor
+        " is not moved
+        let lines = [s:is_exclusive() ? '' : s:get_pos_char(begin)]
     elseif mode ==# "\<C-v>"
         let [min_c, max_c] = s:sort_num([begin[1], end[1]])
         let lines = map(range(begin[0], end[0]), '
@@ -241,19 +241,14 @@ function! s:get_selected_text(...) abort
     return join(lines, "\n") . (mode ==# 'V' ? "\n" : '')
 endfunction
 
-" @return multibyte aware column number for select
-function! s:get_multibyte_aware_col(pos) abort
-    let [pos, other] = [a:pos, a:pos is '.' ? 'v' : '.']
+" @return Number: return multibyte aware column number in Visual mode to
+" select
+function! s:get_col_in_visual(pos) abort
+    let [pos, other] = [a:pos, a:pos is# '.' ? 'v' : '.']
     let c = col(pos)
-    let d = 0
-    let result = s:compare_pos(s:getcoord(pos), s:getcoord(other))
-    let [c1, c2] = &selection is 'exclusive' ? [c - 1, -1] : [c, c]
-    if result > 0
-        let c = c1
-        let d = len(s:get_pos_char([line(pos), c])) - 1
-    elseif result == 0
-        let c = c2
-    endif
+    let d = s:compare_pos(s:getcoord(pos), s:getcoord(other)) > 0
+    \   ? len(s:get_pos_char([line(pos), c - (s:is_exclusive() ? 1 : 0)])) - 1
+    \   : 0
     return c + d
 endfunction
 
@@ -268,6 +263,15 @@ function! s:is_visual(mode) abort
     return a:mode =~# "[vV\<C-v>]"
 endfunction
 
+" @return Boolean
+function! s:is_exclusive() abort
+    return &selection is# 'exclusive'
+endfunction
+
+function! s:curswant() abort
+    return winsaveview().curswant
+endfunction
+
 " @return coordinate: [Number, Number]
 function! s:getcoord(expr) abort
     return getpos(a:expr)[1:2]
@@ -278,7 +282,7 @@ endfunction
 " @return String
 function! s:get_pos_char(...) abort
     let pos = get(a:, 1, '.')
-    let [line, col] = type(pos) is# type('') ? s:getcoord(pos) : pos 
+    let [line, col] = type(pos) is# type('') ? s:getcoord(pos) : pos
     return matchstr(getline(line), '.', col - 1)
 endfunction
 
