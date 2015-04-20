@@ -214,14 +214,14 @@ function! s:get_selected_text(...) abort
     let current_pos = [line('.'), end_col]
     let other_end_pos = [line('v'), s:get_col_in_visual('v')]
     let [begin, end] = s:sort_pos([current_pos, other_end_pos])
-    if s:is_exclusive() && begin isnot# end
+    if s:is_exclusive() && begin[1] !=# end[1]
         " Decrement column number for :set selection=exclusive
         let end[1] -= 1
     endif
     if mode !=# 'V' && begin ==# end
         " NOTE: return empty string for :set selection=exclusive if the cursor
         " is not moved
-        let lines = [s:is_exclusive() ? '' : s:get_pos_char(begin)]
+        let lines = [s:get_pos_char(begin)]
     elseif mode ==# "\<C-v>"
         let [min_c, max_c] = s:sort_num([begin[1], end[1]])
         let lines = map(range(begin[0], end[0]), '
