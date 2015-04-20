@@ -221,8 +221,7 @@ function! s:get_selected_text(...) abort
         endif
     endif
     if mode !=# 'V' && begin ==# end
-        " multibyte handling for one char selection
-        let lines = [matchstr(getline(begin[0]), '.', begin[1]-1)]
+        let lines = [s:get_pos_char(begin)]
     elseif mode ==# "\<C-v>"
         let [min_c, max_c] = s:sort_num([begin[1], end[1]])
         let lines = map(range(begin[0], end[0]), '
@@ -251,7 +250,7 @@ function! s:get_multibyte_aware_col(pos) abort
     let [c1, c2] = &selection is 'exclusive' ? [c - 1, -1] : [c, c]
     if result > 0
         let c = c1
-        let d = len(matchstr(getline(pos), '.', c - 1)) - 1
+        let d = len(s:get_pos_char([line(pos), c])) - 1
     elseif result == 0
         let c = c2
     endif
@@ -260,7 +259,7 @@ endfunction
 
 function! s:get_multi_col(pos) abort
     let c = col(a:pos)
-    return c + len(matchstr(getline(a:pos), '.', c - 1)) - 1
+    return c + len(s:get_pos_char([line(a:pos), c])) - 1
 endfunction
 
 " Helper:
@@ -274,8 +273,13 @@ function! s:getcoord(expr) abort
     return getpos(a:expr)[1:2]
 endfunction
 
-function! s:get_pos_char() abort
-    return getline('.')[col('.')-1]
+"" Return character at given position with multibyte handling
+" @arg [Number, Number] as coordinate or expression for position :h line()
+" @return String
+function! s:get_pos_char(...) abort
+    let pos = get(a:, 1, '.')
+    let [line, col] = type(pos) is# type('') ? s:getcoord(pos) : pos 
+    return matchstr(getline(line), '.', col - 1)
 endfunction
 
 " @return int index of cursor in cword
