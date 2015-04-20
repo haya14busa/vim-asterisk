@@ -89,11 +89,27 @@ Describe visual
         End
     End
 
-    Context V*
-        It search forward with \<\>
+    Context no cursor movement
+        It get character under cursor with v
+            normal v*
+            Assert Equals(@/, '\V\<a')
+        End
+        It get character under cursor with <C-v>
+            silent! execute 'normal' "\<C-v>*"
+            Assert Equals(@/, '\V\<a')
+        End
+        It get line with <C-v>
             normal V*
             Assert Equals(@/, '\V\<1.asterisk 2.asterisk 3.asterisk\n')
         End
     End
+
+    Context <C-v>*
+        It search forward with \<\>
+            silent! execute 'normal' "\<C-v>ej*"
+            Assert Equals(@/, '\V\<asterisk\nAsterisk\>')
+        End
+    End
+
 
 End
