@@ -74,7 +74,7 @@ Describe visual
     Context regular expression handling
         It correctly escape regex
           normal! 4j0
-          normal vl*
+          normal viW*
           Assert Equals(@/, '\V.*')
         End
     End
