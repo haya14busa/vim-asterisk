@@ -27,17 +27,14 @@ Describe visual
 
     Context *
         It search forward with \<\>
-            " 'selection' handling
             normal viw*
             Assert Equals(@/, '\V\<asterisk\>')
         End
         It search forward only with \<
-            " 'selection' handling
             normal ve5h*
             Assert Equals(@/, '\V\<ast')
         End
         It search forward only with \>
-            " 'selection' handling
             normal 2lve*
             Assert Equals(@/, '\Vterisk\>')
         End
@@ -45,27 +42,22 @@ Describe visual
 
     Context multibyte *
         It handle left keyword
-            " 'selection' handling
             normal 3jve3h*
             Assert Equals(@/, '\V\<アスタ')
         End
         It handle right keyword
-            " 'selection' handling
             normal 3j3lve*
             Assert Equals(@/, '\Vリスク\>')
         End
         It handle left and right keyword
-            " 'selection' handling
             normal 3jve*
             Assert Equals(@/, '\V\<アスタリスク\>')
         End
         It is irrelabant with keyword
-            " 'selection' handling
             normal 3j1lve2h*
             Assert Equals(@/, '\Vスタリ')
         End
         It handle one character selection
-            " 'selection' handling
             normal 3jve5h*
             Assert Equals(@/, '\V\<ア')
         End
@@ -97,5 +89,11 @@ Describe visual
         End
     End
 
+    Context V*
+        It search forward with \<\>
+            normal V*
+            Assert Equals(@/, '\V\<1.asterisk 2.asterisk 3.asterisk\n')
+        End
+    End
 
 End
