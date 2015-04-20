@@ -53,7 +53,7 @@ function! asterisk#do(mode, config) abort
     let config = extend(s:default_config(), a:config)
     let is_visual = s:is_visual(a:mode)
     " Raw cword without \<\>
-    let cword = s:escape_pattern((is_visual ? s:get_selected_text() : expand('<cword>')))
+    let cword = (is_visual ? s:get_selected_text() : s:escape_pattern(expand('<cword>')))
     if cword is# ''
         return s:generate_error_cmd(is_visual)
     endif
@@ -72,23 +72,34 @@ function! asterisk#do(mode, config) abort
     if config.do_jump
         return search_cmd . "\<CR>"
     elseif config.keeppos && offset isnot 0
-        " Do not jump with keeppos feature
-        let echo = printf('echo "%s"', escape(pattern_offseted, '\'))
-        let restore = s:restore_pos_cmd()
+        "" Do not jump with keeppos feature
+        " NOTE: It doesn't move cursor, so we can assume it works with
+        " operator pending mode even if it returns command to execute.
+        let echo = s:generate_echo_cmd(pattern_offseted)
+        let restore = s:generate_restore_pos_cmd()
         "" *premove* & *aftermove* : not to cause flickr as mush as possible
         " flick corner case: `#` with under cursor word at the top of window
         " and the cursor is at the end of the word.
-        let premove = 'm`' . (config.direction is s:DIRECTION.forward ? '0' : '$')
+        let premove =
+        \   (a:mode isnot# 'n' ? "\<Esc>" : '')
+        \   . 'm`'
+        \   . (config.direction is s:DIRECTION.forward ? '0' : '$')
         let aftermove = "\<C-o>"
-        return printf("%s%s\<CR>%s:%s | %s\<CR>", premove, search_cmd, aftermove, restore, echo)
+        " NOTE: To avoid hit-enter prompt, it execute `restore` and `echo`
+        " command separately. I can also implement one function and call it
+        " once instead of separately, should I do this?
+        return printf("%s%s\<CR>%s:%s\<CR>:%s\<CR>", premove, search_cmd, aftermove, restore, echo)
     else " Do not jump: Just handle search related
         call s:set_search(pattern)
-        return s:generate_set_search_cmd(pattern, pre, config)
+        return s:generate_set_search_cmd(pattern, a:mode, config)
     endif
 endfunction
 
 "" For keeppos feature
-function! asterisk#restore() abort
+" NOTE: To avoid hit-enter prompt, this function name should be as short as
+" possible. `r` is short for restore. Should I use more short function using
+" basic global function instead of autoload one.
+function! asterisk#r() abort
     call winrestview(s:w)
 endfunction
 
@@ -96,9 +107,10 @@ function! s:set_view(view) abort
     let s:w = a:view
 endfunction
 
-function! s:restore_pos_cmd() abort
+" @return restore_position_command: String
+function! s:generate_restore_pos_cmd() abort
     call s:set_view(winsaveview())
-    return 'call asterisk#restore()'
+    return 'call asterisk#r()'
 endfunction
 
 " @return \<cword\> if needed: String
@@ -152,14 +164,20 @@ endfunction
 "" Generate command to turn on search related option like hlsearch to work
 " with :h function-search-undo
 " @return command: String
-function! s:generate_set_search_cmd(pattern, pre, config) abort
+function! s:generate_set_search_cmd(pattern, mode, config) abort
     " :h function-search-undo
     " :h v:hlsearch
     " :h v:searchforward
     let hlsearch = 'let &hlsearch=&hlsearch'
     let searchforward = printf('let v:searchforward = %d', a:config.direction)
-    let echo = printf('echo "%s"', escape(a:pattern, '\'))
-    return printf("%s:\<C-u>%s | %s | %s\<CR>", a:pre, hlsearch, searchforward, echo)
+    let echo = s:generate_echo_cmd(a:pattern)
+    let esc = (a:mode isnot# 'n' ? "\<Esc>" : '')
+    return printf("%s:\<C-u>%s\<CR>:%s\<CR>:%s\<CR>", esc, hlsearch, searchforward, echo)
+endfunction
+
+" @return echo_command: String
+function! s:generate_echo_cmd(message) abort
+    return printf('echo "%s"', escape(a:message, '\"'))
 endfunction
 
 "" Generate command to show error with empty pattern

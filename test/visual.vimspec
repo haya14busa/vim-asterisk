@@ -7,6 +7,10 @@ Describe visual
         \   , '4.Asterisk 5.AsteRisK 6.Asterisk'
         \   , ''
         \   , '7.アスタリスク 8.アスタリスクです 9.アスタリスク?'
+        \   , '.* .* .*'
+        \   , '.* asterisk asterisk'
+        \   , '".*" ".*" ''asterisk'' ''asterisk'''
+        \   , '"''.*" "''.*" "aste"risk" "aste"risk"'
         \ ]
         call g:Add_lines(lines)
     End
@@ -66,5 +70,32 @@ Describe visual
             Assert Equals(@/, '\V\<ア')
         End
     End
+
+    Context regular expression handling
+        It correctly escape regex
+          normal! 4j0
+          normal vl*
+          Assert Equals(@/, '\V.*')
+        End
+    End
+
+    Context handling quotes
+        It correctly handle double quotes with z*
+          normal! 6j0
+          normal viWz*
+          Assert Equals(@/, '\V".*"')
+        End
+        It correctly handle double quotes with *
+          normal! 6j0
+          normal viW*
+          Assert Equals(@/, '\V".*"')
+        End
+        It correctly handle single quotes with z*
+          normal! 6j02W
+          normal viWz*
+          Assert Equals(@/, '\V''asterisk''')
+        End
+    End
+
 
 End
