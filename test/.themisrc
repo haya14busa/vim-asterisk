@@ -3,6 +3,12 @@ call themis#option('recursive', 1)
 let g:Expect = themis#helper('expect')
 call themis#helper('command').with(themis#helper('assert')).with({'Expect': g:Expect})
 
+
+" NOTE: basic specs should pass regardless &selection value except selection
+" specific specs
+" TODO: Automate testing with other values
+set selection=exclusive
+
 language C
 set encoding=utf-8 "Sets the character encoding used inside Vim
 set termencoding=utf-8

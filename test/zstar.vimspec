@@ -44,6 +44,19 @@ Describe zstar
             normal! 2h
             Assert Equals(g:Get_pos_char(), '1')
         End
+        It handle 'selection' value
+          :1,$ delete
+          call g:Add_lines(['NeoBundle "kannokanno/previm"'])
+          let save = &selection
+          for v in ['inclusive', 'old', 'exclusive']
+            :1
+            Assert Equals(g:Get_pos_char(), 'N')
+            let &selection=v
+            normal ve6ho*
+            Assert Equals(histget('/', -1), '\V\<Neo')
+          endfor
+          let &selection = save
+        End
     End
 
 End
