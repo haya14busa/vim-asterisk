@@ -6,5 +6,5 @@ install:
 before_script:
   - vim --version
 script:
-  - vim-themis/bin/themis --reporter spec
+  - /tmp/vim-themis/bin/themis --reporter spec
   - sh /tmp/vim-vimlint/bin/vimlint.sh -l /tmp/vim-vimlint -p /tmp/vim-vimlparser -e EVL102.l:_=1 -c func_abort=1 plugin autoload
