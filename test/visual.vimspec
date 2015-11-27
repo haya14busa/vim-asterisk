@@ -40,6 +40,14 @@ Describe visual
         End
     End
 
+    Context #
+        It search backward and jump to next matchecd pattern
+            normal $viw2#
+            Assert Equals(@/, '\V\<asterisk\>')
+            Assert Equals(col('.'), 3)
+        End
+    End
+
     Context multibyte *
         It handle left keyword
             normal 3jve3h*
