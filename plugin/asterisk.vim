@@ -38,14 +38,14 @@ let s:save_cpo = &cpo
 set cpo&vim
 " }}}
 
-noremap <expr> <Plug>(asterisk-*)   asterisk#do(mode(1), {'direction' : 1, 'do_jump' : 1, 'is_whole' : 1})
-noremap <expr> <Plug>(asterisk-g*)  asterisk#do(mode(1), {'direction' : 1, 'do_jump' : 1, 'is_whole' : 0})
-noremap <expr> <Plug>(asterisk-z*)  asterisk#do(mode(1), {'direction' : 1, 'do_jump' : 0, 'is_whole' : 1})
-noremap <expr> <Plug>(asterisk-gz*) asterisk#do(mode(1), {'direction' : 1, 'do_jump' : 0, 'is_whole' : 0})
-noremap <expr> <Plug>(asterisk-#)   asterisk#do(mode(1), {'direction' : 0, 'do_jump' : 1, 'is_whole' : 1})
-noremap <expr> <Plug>(asterisk-g#)  asterisk#do(mode(1), {'direction' : 0, 'do_jump' : 1, 'is_whole' : 0})
-noremap <expr> <Plug>(asterisk-z#)  asterisk#do(mode(1), {'direction' : 0, 'do_jump' : 0, 'is_whole' : 1})
-noremap <expr> <Plug>(asterisk-gz#) asterisk#do(mode(1), {'direction' : 0, 'do_jump' : 0, 'is_whole' : 0})
+noremap <expr><silent> <Plug>(asterisk-*)   asterisk#do(mode(1), {'direction' : 1, 'do_jump' : 1, 'is_whole' : 1})
+noremap <expr><silent> <Plug>(asterisk-g*)  asterisk#do(mode(1), {'direction' : 1, 'do_jump' : 1, 'is_whole' : 0})
+noremap <expr><silent> <Plug>(asterisk-z*)  asterisk#do(mode(1), {'direction' : 1, 'do_jump' : 0, 'is_whole' : 1})
+noremap <expr><silent> <Plug>(asterisk-gz*) asterisk#do(mode(1), {'direction' : 1, 'do_jump' : 0, 'is_whole' : 0})
+noremap <expr><silent> <Plug>(asterisk-#)   asterisk#do(mode(1), {'direction' : 0, 'do_jump' : 1, 'is_whole' : 1})
+noremap <expr><silent> <Plug>(asterisk-g#)  asterisk#do(mode(1), {'direction' : 0, 'do_jump' : 1, 'is_whole' : 0})
+noremap <expr><silent> <Plug>(asterisk-z#)  asterisk#do(mode(1), {'direction' : 0, 'do_jump' : 0, 'is_whole' : 1})
+noremap <expr><silent> <Plug>(asterisk-gz#) asterisk#do(mode(1), {'direction' : 0, 'do_jump' : 0, 'is_whole' : 0})
 
 " Restore 'cpoptions' {{{
 let &cpo = s:save_cpo
