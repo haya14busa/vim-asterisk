@@ -35,7 +35,7 @@ let s:DIRECTION = { 'forward': 1, 'backward': 0 } " see :h v:searchforward
 
 let g:asterisk#keeppos = get(g:, 'asterisk#keeppos', s:FALSE)
 
-" do_jump: do not move cursor
+" do_jump: do not move cursor if false
 " is_whole: is_whole word. false if `g` flag given (e.g. * -> true, g* -> false)
 let s:_config = {
 \   'direction' : s:DIRECTION.forward,
@@ -76,7 +76,7 @@ function! asterisk#do(mode, config) abort
         " NOTE: It doesn't move cursor, so we can assume it works with
         " operator pending mode even if it returns command to execute.
         let echo = s:generate_echo_cmd(pattern_offseted)
-        let restore = s:generate_restore_pos_cmd()
+        let restore = s:generate_restore_cmd()
         "" *premove* & *aftermove* : not to cause flickr as mush as possible
         " flick corner case: `#` with under cursor word at the top of window
         " and the cursor is at the end of the word.
@@ -101,15 +101,34 @@ endfunction
 " basic global function instead of autoload one.
 function! asterisk#r() abort
     call winrestview(s:w)
+    call s:restore_event_ignore()
 endfunction
 
 function! s:set_view(view) abort
     let s:w = a:view
 endfunction
 
-" @return restore_position_command: String
-function! s:generate_restore_pos_cmd() abort
+"" For keeppos feature
+" NOTE: vim-asterisk moves cursor temporarily for keeppos feature with search
+" commands. It should not trigger the event related to this cursor move, so
+" set eventignore and restore it afterwards.
+function! s:set_event_ignore() abort
+    let s:ei = &ei
+    let events = ['CursorMoved']
+    if exists('##CmdlineEnter')
+        let events += ['CmdlineEnter', 'CmdlineLeave']
+    endif
+    let &ei = join(events, ',')
+endfunction
+
+function! s:restore_event_ignore() abort
+    let &ei = s:ei
+endfunction
+
+" @return restore_command: String
+function! s:generate_restore_cmd() abort
     call s:set_view(winsaveview())
+    call s:set_event_ignore()
     return 'call asterisk#r()'
 endfunction
 
