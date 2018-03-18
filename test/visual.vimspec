@@ -11,6 +11,7 @@ Describe visual
         \   , '.* asterisk asterisk'
         \   , '".*" ".*" ''asterisk'' ''asterisk'''
         \   , '"''.*" "''.*" "aste"risk" "aste"risk"'
+        \   , "asterisk\r"
         \ ]
         call g:Add_lines(lines)
     End
@@ -117,6 +118,13 @@ Describe visual
             silent! execute 'normal' "\<C-v>ej*"
             Assert Equals(@/, '\V\<asterisk\nAsterisk\>')
         End
+    End
+
+    Context contains \r
+      It handles correctly
+        normal 8j$v*
+        Assert Equals(@/, '\V\r')
+      End
     End
 
 
