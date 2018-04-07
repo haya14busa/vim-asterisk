@@ -170,6 +170,7 @@ function! s:convert_2_word_pattern_4_visual(pattern, config) abort
         endif
     endif
     let text = substitute(escape(text, '\' . type), "\n", '\\n', 'g')
+    let text = substitute(text, "\r", '\\r', 'g')
     return '\V' . pre . text . post
 endfunction
 
