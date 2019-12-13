@@ -82,7 +82,7 @@ KEY MAPPINGS 					*asterisk-key-mappings*
 <Plug>(asterisk-gz#)   					*<Plug>(asterisk-gz#)*
 
 	Basic behavior is almost same with default one.
-	See: |star|, |#|, |gsatr|, |g#|
+	See: |star|, |#|, |gstar|, |g#|
 
 	Improvement:
 	    - It uses not only 'ignorecase' but also 'smartcase' unlike
