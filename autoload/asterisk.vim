@@ -84,7 +84,11 @@ function! asterisk#do(mode, config) abort
         \   (a:mode isnot# 'n' ? "\<Esc>" : '')
         \   . 'm`'
         \   . (config.direction is s:DIRECTION.forward ? '0' : '$')
-        let aftermove = "\<C-o>"
+        if has('nvim')
+            let aftermove = '``'
+        else
+            let aftermove = "\<C-o>"
+        endif
         " NOTE: To avoid hit-enter prompt, it execute `restore` and `echo`
         " command separately. I can also implement one function and call it
         " once instead of separately, should I do this?
