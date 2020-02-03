@@ -12,7 +12,7 @@ Describe zstar
     End
 
     Before each
-        :1
+        call cursor([1, 1])
         normal! 2l
         let @/ = ''
     End
@@ -49,7 +49,7 @@ Describe zstar
           call g:Add_lines(['NeoBundle "kannokanno/previm"'])
           let save = &selection
           for v in ['inclusive', 'old', 'exclusive']
-            :1
+            call cursor([1, 1])
             Assert Equals(g:Get_pos_char(), 'N')
             let &selection=v
             normal ve6ho*
