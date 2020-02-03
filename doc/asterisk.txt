@@ -125,7 +125,7 @@ g:asterisk#keeppos					*g:asterisk#keeppos*
 KNOWN ISSUES						*asterisk-issues*
 
 	Issues
-	  https://github.com/haya14busa/asterisk.vim/issues
+	  https://github.com/haya14busa/vim-asterisk/issues
 
 
 ==============================================================================
