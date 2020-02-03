@@ -84,6 +84,8 @@ function! asterisk#do(mode, config) abort
         \   (a:mode isnot# 'n' ? "\<Esc>" : '')
         \   . 'm`'
         \   . (config.direction is s:DIRECTION.forward ? '0' : '$')
+        " NOTE: Neovim doesn't stack pos to jumplist after "m`".
+        " https://github.com/haya14busa/vim-asterisk/issues/34
         if has('nvim')
             let aftermove = '``'
         else
