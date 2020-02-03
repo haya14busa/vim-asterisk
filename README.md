@@ -81,7 +81,7 @@ let g:asterisk#keeppos = 1
 
 Special thanks
 --------------
-|asterisk.vim| uses the code from vim-visualstar for visual star feature.
+|vim-asterisk| uses the code from vim-visualstar for visual star feature.
 
 - Author: thinca (https://github.com/thinca)
 - Plugin: https://github.com/thinca/vim-visualstar
