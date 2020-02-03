@@ -14,7 +14,7 @@ Describe basic_asterisk
     End
 
     Before each
-        :1
+        call cursor([1, 1])
         normal! 2l
     End
 
