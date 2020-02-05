@@ -153,25 +153,20 @@ function! s:convert_2_word_pattern_4_visual(pattern, config) abort
     let [pre, post] = ['', '']
     if a:config.is_whole
         let [head_pos, tail_pos] = s:sort_pos([s:getcoord('.'), s:getcoord('v')])
-        let head = matchstr(text, '^.')
-        let is_head_multibyte = 1 < len(head)
         let [l, col] = head_pos
         let line = getline(l)
         let before = line[: col - 2]
         let outer = matchstr(before, '.$')
-        if text =~# '^\k' && ((!empty(outer) && len(outer) != len(head)) ||
-        \   (!is_head_multibyte && (col == 1 || before !~# '\k$')))
+        if text =~# '^\k' && outer !~# '\k'
             let pre = '\<'
         endif
         let tail = matchstr(text, '.$')
-        let is_tail_multibyte = 1 < len(tail)
         let [l, col] = tail_pos
         let col += s:is_exclusive() && head_pos[1] !=# tail_pos[1] ? - 1 : len(tail) - 1
         let line = getline(l)
         let after = line[col :]
         let outer = matchstr(after, '^.')
-        if text =~# '\k$' && ((!empty(outer) && len(outer) != len(tail)) ||
-        \   (!is_tail_multibyte && (col == len(line) || after !~# '^\k')))
+        if text =~# '\k$' && outer !~# '\k'
             let post = '\>'
         endif
     endif
