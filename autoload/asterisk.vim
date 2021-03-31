@@ -351,7 +351,7 @@ endfunction
 
 " taken from :h Vital.Prelude.escape_pattern()
 function! s:escape_pattern(str) abort
-    return escape(a:str, '~"\.^$[]*')
+    return escape(a:str, '~"\.^$[]*/')
 endfunction
 
 " Restore 'cpoptions' {{{
